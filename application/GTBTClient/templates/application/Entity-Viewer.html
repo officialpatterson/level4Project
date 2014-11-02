@@ -1,0 +1,235 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta http-equiv="X-UA-Compatible" content="IE=edge">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Good Tweet, Bad Tweet</title>
+<link rel="stylesheet" href="/static/application/dist/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/static/application/theme.css">
+</head>
+<body>
+    
+    <nav class="navbar navbar-default" role="navigation">
+        <div class="container-fluid">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="/app/">Good Tweet, Bad Tweet</a>
+            </div>
+            
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav">
+                </ul>
+                <form class="navbar-form navbar-right" id="search" role="search">
+                    <div class="form-group">
+                        <input type="text" class="form-control" placeholder="Search">
+                            </div>
+                    <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+               
+            </div><!-- /.navbar-collapse -->
+        </div><!-- /.container-fluid -->
+    </nav>
+<div id="container">
+    <div class="panel panel-default">
+    <div class="panel-body" id="page-body">
+    <div class="page-header">
+        <h1>Entity Single View <small>SRJ056718</small></h1>
+    </div>
+    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="panel-statistics">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Entity Statistics</a>
+                </h4>
+            </div>
+            <div id="collapseOne" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-statistics">
+                <div class="panel-body">
+                    <canvas id="myChart" width="1300" height="450"></canvas>
+                </div>
+                <table class="table table-striped">
+                    <thead><tr><th>Class</th><th>Count</th></tr></thead>
+                    <tbody id="stats-body">
+                    </tbody>
+                </table>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="panel-activity">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">Activity</a>
+                </h4>
+            </div>
+            <div id="collapseTwo" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-activity">
+                <div class="panel-body">
+                    <canvas id="activityChart" width="1300" height="450"></canvas>
+                    
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="panel-tweets">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">Twitter Data</a>
+                </h4>
+            </div>
+            <div id="collapseThree" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-tweets">
+                <div class="panel-body" id="panel-tweets-body">
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+    </div>
+
+</div>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="/static/application/chart.js"></script>
+<script src="http://d3js.org/d3.v3.js"></script>
+<script src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
+<script>
+function buildStatisticsPanel(stats){
+    var classes = new Array();
+    var counts = new Array();
+    $("#stats-body").empty();
+    for (var key in stats){
+        
+        classes.push(key)
+        counts.push(stats[key])
+        //below we populate the table of classes.
+        row = "<tr>"+"<td>"+key+"</td>"+"<td>"+stats[key]+"</td>"+"</tr>"
+        $("#stats-body").append(row);
+    }
+    var data = {
+        labels: classes,
+        datasets: [
+                   {
+                   label: "class stats",
+                   fillColor: "rgba(151,187,205,0.5)",
+                   strokeColor: "rgba(151,187,205,0.8)",
+                   highlightFill: "rgba(151,187,205,0.75)",
+                   highlightStroke: "rgba(151,187,205,1)",
+                   data: counts
+                   }
+                   ]
+    };
+    var ctx = document.getElementById("myChart").getContext("2d");
+    var myBarChart = new Chart(ctx).Bar(data);
+
+}
+function getWeekNumber( d ) {
+    
+    // Create a copy of this date object
+    var target  = new Date(d.valueOf());
+    
+    // ISO week date weeks start on monday
+    // so correct the day number
+    var dayNr   = (d.getDay() + 6) % 7;
+    
+    // Set the target to the thursday of this week so the
+    // target date is in the right year
+    target.setDate(target.getDate() - dayNr + 3);
+    
+    // ISO 8601 states that week 1 is the week
+    // with january 4th in it
+    var jan4    = new Date(target.getFullYear(), 0, 4);
+    
+    // Number of days between target date and january 4th
+    var dayDiff = (target - jan4) / 86400000;
+    
+    // Calculate week number: Week 1 (january 4th) plus the
+    // number of weeks between target date and january 4th
+    var weekNr = 1 + Math.ceil(dayDiff / 7);
+    
+    return weekNr;    
+    
+}
+function buildActivityPanel(tweets){
+    
+    
+    //create array for labels and the timeseries, our series will be split into weeks
+    var labelSet = new Array(52);
+    var timeSeries = new Array(52);
+    
+    for (i = 0; i < timeSeries.length; i++){
+        timeSeries[i] = 0
+        labelSet[i] = i
+    }
+    
+    //build the dataset - for each tweet put into correct week bucket
+    for (i = 0; i < tweets.length; i++){
+        var date = new Date(tweets[i]['created_at']);
+        timeSeries[getWeekNumber(date)] = timeSeries[getWeekNumber(date)] + 1;
+    }
+    
+    var data = {
+        labels: labelSet,
+        datasets: [
+                   {
+                   label: "Entity Aggregate dataset",
+                   fillColor: "rgba(220,220,220,0.2)",
+                   strokeColor: "rgba(220,220,220,1)",
+                   pointColor: "rgba(220,220,220,1)",
+                   pointStrokeColor: "#fff",
+                   pointHighlightFill: "#fff",
+                   pointHighlightStroke: "rgba(220,220,220,1)",
+                   data: timeSeries
+                   }
+                   ]
+    };
+    var ctx = document.getElementById("activityChart").getContext("2d");
+    var myBarChart = new Chart(ctx).Line(data);
+
+}
+function buildTweetsPanel(tweets){
+}
+function buildPage(entity_data){
+    buildStatisticsPanel(entity_data['stats']);
+    buildActivityPanel(entity_data['tweets']);
+    buildTweetsPanel(entity_data['tweets']);
+}
+function getUrlParameter(sParam){
+    var sPageURL = window.location.search.substring(1);
+    var sURLVariables = sPageURL.split('&');
+    for (var i = 0; i < sURLVariables.length; i++)
+    {
+        var sParameterName = sURLVariables[i].split('=');
+        if (sParameterName[0] == sParam)
+        {
+            return sParameterName[1];
+        }
+    }
+}
+function handleError(status){
+    if(status == 404){
+        $("#page-body").html("<div class=\"page-header\"><h1>Entity not found on Server</h1></div>");
+    }
+}
+$( "#search" ).submit(function( event ) {
+                      var id = $( "input:first" ).val();
+                      url = "http://localhost:8888/entity/"+id;
+                      $.getJSON(url,function(data) { buildPage(data);});
+                      
+                      event.preventDefault();
+                      });
+$(document).ready(function(){
+    url = "http://localhost:8888/entity/"+getUrlParameter("id");
+    $.getJSON(url,function(data) {
+                buildPage(data);
+                }
+              ).fail(function(jqXHR) {
+                     handleError(jqXHR.status);
+                     })
+});
+</script>
+</body>
+</html>

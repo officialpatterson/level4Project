@@ -1,0 +1,30 @@
+<!doctype html>
+<html>
+<head>
+<title>WebSockets Hello World</title>
+<meta charset="utf-8" />
+<style type="text/css">
+body {
+text-align: center;
+min-width: 500px;
+}
+</style>
+<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+<script>
+    $(document).ready(function(){
+                      $("#container").append("blah")
+                      $.getJSON( "http://localhost:8888/entity/RL2013D02E056", function( data ) {
+                             $("#container").append(data['statsgig'])
+                                
+                              
+                                });
+    });
+</script>
+</head>
+
+<body>
+<h1>WebSockets Hello World</h1>
+<div id="container">
+</div>
+</body>
+</html>

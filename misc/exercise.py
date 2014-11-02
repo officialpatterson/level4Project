@@ -48,11 +48,11 @@ def extract_features(document):
 #Build Classifier and train
 trainingSet = []
 for (tweet,dimension) in buildTrainingSet(loadTweets()):
-    tokens = [e.lower() for e in tweet.split() if len(e) >= 3]
+    tokens = tokens = nltk.word_tokenize(tweet)
     trainingSet.append((tokens, dimension))
 
 
-word_features = get_word_features(get_words_in_tweets(trainingSet[0:100]))
+word_features = get_word_features(get_words_in_tweets(trainingSet[0:1024]))
 training_set = nltk.classify.apply_features(extract_features, trainingSet)
 classifier = nltk.NaiveBayesClassifier.train(training_set)
 
@@ -61,8 +61,8 @@ classifier = nltk.NaiveBayesClassifier.train(training_set)
 collection = buildTrainingSet(loadTweets())
 correctLabels = 0
 incorrectLabels = 0
-sampleSize = 100
-n= 500
+sampleSize = 1024
+n= 1024
 #loop for all the tweets and attempt classification
 for i in range(n,n+sampleSize):
 	tweet_text = collection[i][0]
@@ -79,6 +79,8 @@ print '\n\n\n\n\n\n\n--------------Test Summary--------------'
 print 'Collection Size: ', sampleSize
 print 'Correct labelling: ', correctLabels
 print 'Incorrect labelling: ', incorrectLabels
-print '%: ', (correctLabels/100)*100
+print 'accuracy: ', nltk.classify.accuracy(classifier, collection[n:sampleSize])
+print(nltk.classify.accuracy(classifier, collection[n:sampleSize]))
+classifier.show_most_informative_features()
 
 
