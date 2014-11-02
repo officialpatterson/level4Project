@@ -1,19 +1,8 @@
-
-from tornado.web import RequestHandler
 from pymongo import MongoClient
 from util.JsonEncoder import JSONEncoder
-import pymongo
+from Handler import Handler
 
-class EntityHandler(RequestHandler):
-    
-    def initialize(self):
-        self.set_header("Access-Control-Allow-Origin", "http://localhost:8000") #Access control policy fix. remove in production.
-        try:
-            client = MongoClient()
-            self.classifications = client.GTBT.classifications
-        except pymongo.errors.ConnectionFailure:
-            self.classifications = None
-    
+class EntityHandler(Handler):
     def get(self, entityid):
         #make sure the database connection is present before continuing.
         if self.classifications is None:
