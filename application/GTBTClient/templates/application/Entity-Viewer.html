@@ -1,42 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta http-equiv="X-UA-Compatible" content="IE=edge">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Good Tweet, Bad Tweet</title>
-<link rel="stylesheet" href="/static/application/dist/css/bootstrap.min.css">
-    <link rel="stylesheet" href="/static/application/theme.css">
-</head>
-<body>
-    
-    <nav class="navbar navbar-default" role="navigation">
-        <div class="container-fluid">
-            <!-- Brand and toggle get grouped for better mobile display -->
-            <div class="navbar-header">
-                <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-                    <span class="sr-only">Toggle navigation</span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                    <span class="icon-bar"></span>
-                </button>
-                <a class="navbar-brand" href="/app/">Good Tweet, Bad Tweet</a>
-            </div>
-            
-            <!-- Collect the nav links, forms, and other content for toggling -->
-            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-                <ul class="nav navbar-nav">
-                </ul>
-                <form class="navbar-form navbar-right" id="search" role="search">
-                    <div class="form-group">
-                        <input type="text" class="form-control" placeholder="Search">
-                            </div>
-                    <button type="submit" class="btn btn-default">Submit</button>
-                </form>
-               
-            </div><!-- /.navbar-collapse -->
-        </div><!-- /.container-fluid -->
-    </nav>
+{% include "application/head.html" %}
 <div id="container">
     <div class="panel panel-default">
     <div class="panel-body" id="page-body">
@@ -52,7 +14,7 @@
             </div>
             <div id="collapseOne" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-statistics">
                 <div class="panel-body">
-                    <canvas id="myChart" width="1300" height="450"></canvas>
+                    <canvas id="myChart" width="1200" height="500"></canvas>
                 </div>
                 <table class="table table-striped">
                     <thead><tr><th>Class</th><th>Count</th></tr></thead>
@@ -69,7 +31,7 @@
             </div>
             <div id="collapseTwo" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-activity">
                 <div class="panel-body">
-                    <canvas id="activityChart" width="1300" height="450"></canvas>
+                    <canvas id="activityChart" width="1200" height="500"></canvas>
                     
                 </div>
             </div>
@@ -122,6 +84,7 @@ function buildStatisticsPanel(stats){
                    }
                    ]
     };
+    //Chart.defaults.global.responsive = true;
     var ctx = document.getElementById("myChart").getContext("2d");
     var myBarChart = new Chart(ctx).Bar(data);
 
@@ -191,6 +154,11 @@ function buildActivityPanel(tweets){
 
 }
 function buildTweetsPanel(tweets){
+    for(i=0; i<tweets.length; i++){
+        
+        $("#panel-tweets-body").append("<div class=\"panel panel-default\"><div class=\"panel-body\"> <span class=\"badge\">"+tweets[i]['class']+"</span>"+tweets[i]['text']+"</div></div>");
+      
+    }
 }
 function buildPage(entity_data){
     buildStatisticsPanel(entity_data['stats']);

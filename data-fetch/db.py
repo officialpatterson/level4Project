@@ -4,7 +4,7 @@ import json,time, csv, sys, os
 
 client = MongoClient()
 
-db = client.twitter
+db = client.GTBT
 
 
 
@@ -20,7 +20,8 @@ while True:
         statuses = json.loads(result.text)
         for status in statuses['statuses']:
             status['entity'] = e #append the entity name to the tweet
-            collection = db.tweets
+            
+            collection = db.classifications
             collection.insert(status)
 
     time.sleep(180)

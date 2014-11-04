@@ -8,9 +8,7 @@ def entity(request):
     return render_to_response('application/Entity-Viewer.html',{})
 
 def search(request):
-    response = "search-page"
-    return HttpResponse(response)
+    return render_to_response('application/search.html',{})
 
 def system(request):
-    response = "system-page, change classifiers, take samples to crowdsource etc."
-    return HttpResponse(response)
+    return render_to_response('application/system.html',{})
