@@ -13,8 +13,8 @@
                 <div class="panel-heading">
                     <h3 class="panel-title">Summary</h3>
                 </div>
-                <div class="panel-body">
-                    <p>Written Summary</p>
+                <div class="panel-body" id="panel-summary">
+                    
                 </div>
             </div>
         </div>
@@ -52,15 +52,17 @@
 <script src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
 <script>
 
-
-function buildPage(data){
-   for (i = 0; i < data.length; i++){
-        console.log(data[i]);
+function buildEntityList(data){
+    for (i = 0; i < data.length; i++){
         row = "<tr><td><a href=\"/app/entity/?id="+data[i]+"\">"+data[i]+"</a></td></tr>";
         $("#entities-body").append(row);
-   }
-   
+    }
 }
+function buildPage(data){
+    buildEntityList(data['entities'])
+    $("#panel-summary").append("Size of Collection: "+data['size'])
+}
+
 $(document).ready(function(){
     url = "http://localhost:8888/entities/";
     $.getJSON(url,function(data) { buildPage(data);});

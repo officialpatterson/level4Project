@@ -4,8 +4,10 @@ from Handler import Handler
 
 class EntitiesHandler(Handler):
     def get(self):
-        classifications = self.classifications.distinct('entity')
+        entities = self.classifications.distinct('entity')
+        colsize = self.classifications.count()
+        response = {'size':colsize, 'entities': entities}
         self.set_header("Access-Control-Allow-Origin", "http://localhost:8000") #Access control policy fix. remove in production.
         self.content_type = 'application/json'
-        self.write(JSONEncoder().encode(classifications))
+        self.write(JSONEncoder().encode(response))
 
