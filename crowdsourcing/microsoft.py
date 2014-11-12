@@ -5,15 +5,20 @@ from pymongo import errors, MongoClient
 import json, csv, nltk, time
 
 #setup entitylist
-client = MongoClient()
-db = client.GTBT
 s = TwitterRest()
-entityList = []
+entityList = ['microsoft','apple','hsbc', 'facebook', 'google', 'ford', 'twitter', 'jp morgan', 'samsung' 'huawei']
 
+#authenticate Database Connection
+connection = MongoClient("ds041157.mongolab.com", 41157)
+db = connection["gtbt"]
+# MongoLab has user authentication
+db.authenticate("officialandyp", "cockatiel93")
 while True:
-    result = s.search({'q':'microsoft', 'lang':'en', 'mode':'news' })
-    statuses = json.loads(result.text)
-    for status in statuses['statuses']:
-        collection = db.microsoft
-        collection.insert(status)
-    time.sleep(180)
+    for e in entityList:
+        result = s.search({'q':e, 'lang':'en'})
+        statuses = json.loads(result.text)
+        for status in statuses['statuses']:
+	    status['entity'] = e
+            collection = db.tweets
+            collection.insert(status)
+    time.sleep(120)

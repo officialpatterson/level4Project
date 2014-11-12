@@ -6,4 +6,5 @@ urlpatterns = patterns('',
                        url(r'entity/', views.entity, name='entity'),
                        url(r'search/', views.search, name='search'),
                        url(r'system/', views.system, name='system'),
+                       url(r'login/', views.login, name='login'),
                        )

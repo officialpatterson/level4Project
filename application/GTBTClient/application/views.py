@@ -12,3 +12,6 @@ def search(request):
 
 def system(request):
     return render_to_response('application/system.html',{})
+
+def login(request):
+    return render_to_response('application/login.html',{})
