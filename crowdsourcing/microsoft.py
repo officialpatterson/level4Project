@@ -20,5 +20,8 @@ while True:
         for status in statuses['statuses']:
 	    status['entity'] = e
             collection = db.tweets
-            collection.insert(status)
+	    try:
+                collection.insert(status)
+	    except DuplicateKeyError:
+		print 'err'
     time.sleep(120)
