@@ -22,6 +22,6 @@ while True:
             collection = db.tweets
 	    try:
                 collection.insert(status)
-	    except DuplicateKeyError:
+	    except errors.DuplicateKeyError:
 		print 'err'
     time.sleep(120)
