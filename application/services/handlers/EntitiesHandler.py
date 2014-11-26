@@ -7,7 +7,7 @@ class EntitiesHandler(Handler):
         entities = self.classifications.distinct('entity')
         colsize = self.classifications.count()
         response = {'size':colsize, 'entities': entities}
-        self.set_header("Access-Control-Allow-Origin", "http://localhost:8000") #Access control policy fix. remove in production.
+        self.set_header("Access-Control-Allow-Origin", "*") #Access control policy fix. remove in production.
         self.content_type = 'application/json'
         self.write(JSONEncoder().encode(response))
 

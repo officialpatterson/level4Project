@@ -6,6 +6,6 @@ class Handler(RequestHandler):
     def initialize(self):
         client = MongoClient()
         self.classifications = client.GTBT.classifications
-        self.set_header("Access-Control-Allow-Origin", "http://localhost:8000")
+        self.set_header("Access-Control-Allow-Origin", "*")
 
 

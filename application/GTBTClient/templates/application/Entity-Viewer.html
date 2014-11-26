@@ -3,7 +3,8 @@
     <div class="panel panel-default">
     <div class="panel-body" id="page-body">
     <div class="page-header">
-        <h1>Entity Single View <small>SRJ056718</small></h1>
+        <h1>Entity Single View <small id="pgtitle"></small></h1>
+        <button type="button" class="btn btn-default">Track This Entity</button>
     </div>
     <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
         <div class="panel panel-default">
@@ -31,19 +32,31 @@
             </div>
             <div id="collapseTwo" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-activity">
                 <div class="panel-body">
-                    <canvas id="activityChart" width="1200" height="500"></canvas>
+                    <div id="activityChart"></div>
                     
+                </div>
+            </div>
+        </div>
+        <div class="panel panel-default">
+            <div class="panel-heading" role="tab" id="panel-location">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">Twitter Locations</a>
+                </h4>
+            </div>
+            <div id="collapseThree" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-locations">
+                <div class="panel-body" id="panel-locations-body"><div id="locationChart"></div>
                 </div>
             </div>
         </div>
         <div class="panel panel-default">
             <div class="panel-heading" role="tab" id="panel-tweets">
                 <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">Twitter Data</a>
+                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">Twitter Data</a>
                 </h4>
             </div>
-            <div id="collapseThree" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-tweets">
+            <div id="collapseFour" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-tweets">
                 <div class="panel-body" id="panel-tweets-body">
+                    
                 </div>
             </div>
         </div>
@@ -56,9 +69,13 @@
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="/static/application/chart.js"></script>
-<script src="http://d3js.org/d3.v3.js"></script>
+<script src="/static/application/d3.min.js"></script>
+<script src="/static/application/rickshaw.min.js"></script>
+<script src="https://www.google.com/jsapi"></script>
 <script src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 <script>
+google.load("visualization", "1", {packages:["corechart", "map", "geochart"]});
 function buildStatisticsPanel(stats){
     var classes = new Array();
     var counts = new Array();
@@ -89,69 +106,41 @@ function buildStatisticsPanel(stats){
     var myBarChart = new Chart(ctx).Bar(data);
 
 }
-function getWeekNumber( d ) {
-    
-    // Create a copy of this date object
-    var target  = new Date(d.valueOf());
-    
-    // ISO week date weeks start on monday
-    // so correct the day number
-    var dayNr   = (d.getDay() + 6) % 7;
-    
-    // Set the target to the thursday of this week so the
-    // target date is in the right year
-    target.setDate(target.getDate() - dayNr + 3);
-    
-    // ISO 8601 states that week 1 is the week
-    // with january 4th in it
-    var jan4    = new Date(target.getFullYear(), 0, 4);
-    
-    // Number of days between target date and january 4th
-    var dayDiff = (target - jan4) / 86400000;
-    
-    // Calculate week number: Week 1 (january 4th) plus the
-    // number of weeks between target date and january 4th
-    var weekNr = 1 + Math.ceil(dayDiff / 7);
-    
-    return weekNr;    
-    
-}
 function buildActivityPanel(tweets){
     
-    
-    //create array for labels and the timeseries, our series will be split into weeks
-    var labelSet = new Array(52);
-    var timeSeries = new Array(52);
-    
-    for (i = 0; i < timeSeries.length; i++){
-        timeSeries[i] = 0
-        labelSet[i] = i
-    }
-    
-    //build the dataset - for each tweet put into correct week bucket
-    for (i = 0; i < tweets.length; i++){
-        var date = new Date(tweets[i]['created_at']);
-        timeSeries[getWeekNumber(date)] = timeSeries[getWeekNumber(date)] + 1;
-    }
-    
-    var data = {
-        labels: labelSet,
-        datasets: [
-                   {
-                   label: "Entity Aggregate dataset",
-                   fillColor: "rgba(220,220,220,0.2)",
-                   strokeColor: "rgba(220,220,220,1)",
-                   pointColor: "rgba(220,220,220,1)",
-                   pointStrokeColor: "#fff",
-                   pointHighlightFill: "#fff",
-                   pointHighlightStroke: "rgba(220,220,220,1)",
-                   data: timeSeries
-                   }
-                   ]
+    $("#activityChart").append("<p><h3>Per Year</h3>");
+    $("#activityChart").append("</p>");
+    $("#activityChart").append("<p><h3>Per Month</h3>");
+    $("#activityChart").append("</p>");
+    $("#activityChart").append("<p><h3>Per Day</h3>");
+    $("#activityChart").append("</p>");
+    $("#activityChart").append("<p><h3>Per hour</h3>");
+    $("#activityChart").append("</p>");
+}
+function drawGeoChart(data_locations) {
+    var data = google.visualization.arrayToDataTable(data_locations);
+    var options = {
+        displayMode: 'markers',
+        colorAxis: {colors: ['#781199', '#781199']},
+        legend: 'none',
     };
-    var ctx = document.getElementById("activityChart").getContext("2d");
-    var myBarChart = new Chart(ctx).Line(data);
-
+    
+    var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
+    chart.draw(data, options);
+}
+function buildLocationPanel(tweets){
+    var hasPlaces = false;
+    for(i=0; i<tweets.length; i++){
+        if(tweets[i]['text']['place'] != null){
+            console.log('got one');
+            hasPlaces = true;
+            $("#locationChart").append("tweet: "+tweets[i]['text']['place']);
+        }
+    }
+    if(!hasPlaces){
+        $("#locationChart").append("all crawled tweets associated with this entity do not provide geolocations");
+    }
+   
 }
 function buildTweetsPanel(tweets){
     for(i=0; i<tweets.length; i++){
@@ -161,8 +150,10 @@ function buildTweetsPanel(tweets){
     }
 }
 function buildPage(entity_data){
+    $("#pgtitle").html(entity_data['entity']);
     buildStatisticsPanel(entity_data['stats']);
     buildActivityPanel(entity_data['tweets']);
+    buildLocationPanel(entity_data['tweets']);
     buildTweetsPanel(entity_data['tweets']);
 }
 function getUrlParameter(sParam){
@@ -183,21 +174,25 @@ function handleError(status){
     }
 }
 $( "#search" ).submit(function( event ) {
-                      var id = $( "input:first" ).val();
-                      url = "http://localhost:8888/entity/"+id;
-                      $.getJSON(url,function(data) { buildPage(data);});
-                      
-                      event.preventDefault();
-                      });
+      var id = $( "input:first" ).val();
+      url = "http://localhost:8888/entity/"+id;
+        
+      $.getJSON(url,function(data) {
+                buildPage(data);
+                }
+                ).fail(function(jqXHR) {
+                       handleError(jqXHR.status);
+                       })
+      });
 $(document).ready(function(){
     url = "http://localhost:8888/entity/"+getUrlParameter("id");
     $.getJSON(url,function(data) {
-                buildPage(data);
-                }
+              buildPage(data);
+              }
               ).fail(function(jqXHR) {
                      handleError(jqXHR.status);
                      })
-});
+    });
 </script>
 </body>
 </html>

@@ -24,6 +24,7 @@ class EntityHandler(Handler):
             self.send_error(404)
             return
         
-        response  = {'entityid':entityid, 'stats':class_aggregate, 'tweets':tweets}
+        response  = {'entityid':entityid, 'stats':class_aggregate, 'tweets':tweets, 'entity':entityid}
+        self.set_header("Access-Control-Allow-Origin", "*")
         self.content_type = 'application/json'
         self.write(JSONEncoder().encode(response))
