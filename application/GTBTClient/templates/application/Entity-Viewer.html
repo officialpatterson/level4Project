@@ -2,197 +2,58 @@
 <div id="container">
     <div class="panel panel-default">
     <div class="panel-body" id="page-body">
-    <div class="page-header">
-        <h1>Entity Single View <small id="pgtitle"></small></h1>
-        <button type="button" class="btn btn-default">Track This Entity</button>
+    <h3 id="pgtitle" class="pull-left"></h3>
+        <button type="button" class="btn btn-default pull-right">Track This Entity</button>
+   
     </div>
-    <div class="panel-group" id="accordion" role="tablist" aria-multiselectable="true">
+    </div>
+    <div class="row">
         <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="panel-statistics">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseOne" aria-expanded="true" aria-controls="collapseOne">Entity Statistics</a>
-                </h4>
+            <div class="panel-heading" role="tab" id="panel-time">
+                <h4 class="panel-title">Rate of tweets</h4>
             </div>
-            <div id="collapseOne" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-statistics">
-                <div class="panel-body">
-                    <canvas id="myChart" width="1200" height="500"></canvas>
-                </div>
-                <table class="table table-striped">
-                    <thead><tr><th>Class</th><th>Count</th></tr></thead>
-                    <tbody id="stats-body">
-                    </tbody>
-                </table>
+            <div class="panel-body" id="panel-locations-body"><div id="TimeChart"></div>
             </div>
+    </div>
+    <div class="row">
+        <div class="col-md-6"><div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="panel-statistics"><h4 class="panel-title">Entity Statistics</h4></div>
+        <div class="panel-body"><canvas id="myChart"></canvas></div>
+        <table class="table table-striped">
+            <thead><tr><th>Class</th><th>Count</th></tr></thead>
+            <tbody id="stats-body">
+            </tbody>
+        </table>
+        </div></div>
+        <div class="col-md-6"><div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="panel-location" data-toggle="tooltip" data-placement="top" title="NB: Not all tweets provide location data">
+            <h4 class="panel-title">Locations</h4>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="panel-activity">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseTwo" aria-expanded="true" aria-controls="collapseTwo">Activity</a>
-                </h4>
-            </div>
-            <div id="collapseTwo" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-activity">
-                <div class="panel-body">
-                    <div id="activityChart"></div>
-                    
-                </div>
-            </div>
+        <div class="panel-body" id="panel-locations-body"><div id="locationChart"></div>
+            <select id="location-filter">
+                <option value="all">all</option>
+            </select>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="panel-location">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseThree" aria-expanded="true" aria-controls="collapseThree">Twitter Locations</a>
-                </h4>
-            </div>
-            <div id="collapseThree" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-locations">
-                <div class="panel-body" id="panel-locations-body"><div id="locationChart"></div>
-                </div>
-            </div>
+        </div></div>
+    </div>
+    <div class="panel panel-default">
+        <div class="panel-heading" role="tab" id="panel-tweets">
+            <h4 class="panel-title">
+                <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">Twitter Data</a>
+            </h4>
         </div>
-        <div class="panel panel-default">
-            <div class="panel-heading" role="tab" id="panel-tweets">
-                <h4 class="panel-title">
-                    <a data-toggle="collapse" data-parent="#accordion" href="#collapseFour" aria-expanded="true" aria-controls="collapseFour">Twitter Data</a>
-                </h4>
-            </div>
-            <div id="collapseFour" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-tweets">
-                <div class="panel-body" id="panel-tweets-body">
-                    
-                </div>
+        <div id="collapseFour" class="panel-collapse collapse collapse" role="tabpanel" aria-labelledby="panel-tweets">
+            <div class="panel-body" id="panel-tweets-body">
+                
             </div>
         </div>
     </div>
-    </div>
-    </div>
-
 </div>
-
+<script src="/static/application/pace.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="/static/application/chart.js"></script>
-<script src="/static/application/d3.min.js"></script>
-<script src="/static/application/rickshaw.min.js"></script>
-<script src="https://www.google.com/jsapi"></script>
-<script src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
-
-<script>
-google.load("visualization", "1", {packages:["corechart", "map", "geochart"]});
-function buildStatisticsPanel(stats){
-    var classes = new Array();
-    var counts = new Array();
-    $("#stats-body").empty();
-    for (var key in stats){
-        
-        classes.push(key)
-        counts.push(stats[key])
-        //below we populate the table of classes.
-        row = "<tr>"+"<td>"+key+"</td>"+"<td>"+stats[key]+"</td>"+"</tr>"
-        $("#stats-body").append(row);
-    }
-    var data = {
-        labels: classes,
-        datasets: [
-                   {
-                   label: "class stats",
-                   fillColor: "rgba(151,187,205,0.5)",
-                   strokeColor: "rgba(151,187,205,0.8)",
-                   highlightFill: "rgba(151,187,205,0.75)",
-                   highlightStroke: "rgba(151,187,205,1)",
-                   data: counts
-                   }
-                   ]
-    };
-    //Chart.defaults.global.responsive = true;
-    var ctx = document.getElementById("myChart").getContext("2d");
-    var myBarChart = new Chart(ctx).Bar(data);
-
-}
-function buildActivityPanel(tweets){
-    
-    $("#activityChart").append("<p><h3>Per Year</h3>");
-    $("#activityChart").append("</p>");
-    $("#activityChart").append("<p><h3>Per Month</h3>");
-    $("#activityChart").append("</p>");
-    $("#activityChart").append("<p><h3>Per Day</h3>");
-    $("#activityChart").append("</p>");
-    $("#activityChart").append("<p><h3>Per hour</h3>");
-    $("#activityChart").append("</p>");
-}
-function drawGeoChart(data_locations) {
-    var data = google.visualization.arrayToDataTable(data_locations);
-    var options = {
-        displayMode: 'markers',
-        colorAxis: {colors: ['#781199', '#781199']},
-        legend: 'none',
-    };
-    
-    var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
-    chart.draw(data, options);
-}
-function buildLocationPanel(tweets){
-    var hasPlaces = false;
-    for(i=0; i<tweets.length; i++){
-        if(tweets[i]['text']['place'] != null){
-            console.log('got one');
-            hasPlaces = true;
-            $("#locationChart").append("tweet: "+tweets[i]['text']['place']);
-        }
-    }
-    if(!hasPlaces){
-        $("#locationChart").append("all crawled tweets associated with this entity do not provide geolocations");
-    }
-   
-}
-function buildTweetsPanel(tweets){
-    for(i=0; i<tweets.length; i++){
-        
-        $("#panel-tweets-body").append("<div class=\"panel panel-default\"><div class=\"panel-body\"> <span class=\"badge\">"+tweets[i]['class']+"</span>"+tweets[i]['text']+"</div></div>");
-      
-    }
-}
-function buildPage(entity_data){
-    $("#pgtitle").html(entity_data['entity']);
-    buildStatisticsPanel(entity_data['stats']);
-    buildActivityPanel(entity_data['tweets']);
-    buildLocationPanel(entity_data['tweets']);
-    buildTweetsPanel(entity_data['tweets']);
-}
-function getUrlParameter(sParam){
-    var sPageURL = window.location.search.substring(1);
-    var sURLVariables = sPageURL.split('&');
-    for (var i = 0; i < sURLVariables.length; i++)
-    {
-        var sParameterName = sURLVariables[i].split('=');
-        if (sParameterName[0] == sParam)
-        {
-            return sParameterName[1];
-        }
-    }
-}
-function handleError(status){
-    if(status == 404){
-        $("#page-body").html("<div class=\"page-header\"><h1>Entity not found on Server</h1></div>");
-    }
-}
-$( "#search" ).submit(function( event ) {
-      var id = $( "input:first" ).val();
-      url = "http://localhost:8888/entity/"+id;
-        
-      $.getJSON(url,function(data) {
-                buildPage(data);
-                }
-                ).fail(function(jqXHR) {
-                       handleError(jqXHR.status);
-                       })
-      });
-$(document).ready(function(){
-    url = "http://localhost:8888/entity/"+getUrlParameter("id");
-    $.getJSON(url,function(data) {
-              buildPage(data);
-              }
-              ).fail(function(jqXHR) {
-                     handleError(jqXHR.status);
-                     })
-    });
-</script>
+<script src="/static/application/entity.js"></script>
 </body>
 </html>

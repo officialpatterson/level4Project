@@ -12,6 +12,7 @@ class EntityHandler(Handler):
         tweets = []
         class_aggregate = {}
         
+        print 'entitid',entityid
         for c in self.classifications.find({"entity": entityid}):
             tweets.append(c)
             #if class already exists just increment the value  else create new class
@@ -24,7 +25,8 @@ class EntityHandler(Handler):
             self.send_error(404)
             return
         
-        response  = {'entityid':entityid, 'stats':class_aggregate, 'tweets':tweets, 'entity':entityid}
+        classes = class_aggregate.keys()
+        response  = {'stats':class_aggregate, 'entity':entityid, 'classes':classes, 'tweets':tweets}
         self.set_header("Access-Control-Allow-Origin", "*")
         self.content_type = 'application/json'
         self.write(JSONEncoder().encode(response))

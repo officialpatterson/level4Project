@@ -7,11 +7,16 @@ import pymongo
 from util.JsonEncoder import JSONEncoder
 from handlers.EntityHandler import EntityHandler
 from handlers.EntitiesHandler import EntitiesHandler
-
-
+from handlers.TweetsHandler import TweetsHandler
+from handlers.DistributionHandler import DistributionHandler
+from handlers.DistributionHandler import DistributionHandler
+from handlers.TimeDistributionHandler import TimeDistributionHandler
 app = Application([
                    url(r"/entity/([A-Za-z0-9]+)", EntityHandler), #IMPLEMENT THIS IMMEDIATELY
-                    url(r"/entities/", EntitiesHandler),
+                   url(r"/entities/", EntitiesHandler),
+                   url(r"/entity/([A-Za-z0-9]+)/tweets/", TweetsHandler),
+                   url(r"/entity/([A-Za-z0-9]+)/dist/", DistributionHandler),
+                   url(r"/entity/([A-Za-z0-9]+)/disttime/", TimeDistributionHandler),
                    ])
 
 def startService():

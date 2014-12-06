@@ -7,8 +7,10 @@
             </div>
         </div>
     </div>
+    {% if user.is_authenticated %}
     <div class="row">
         <div class="col-md-12">
+            
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Entities your Tracking</h3>
@@ -23,6 +25,7 @@
             </div>
         </div>
     </div>
+    {%endif%}
     <div class="row">
         <div class="col-md-6">
             <div class="panel panel-default">
@@ -60,29 +63,10 @@
     </div>
 </div>
 </div>
-
+<script src="/static/application/pace.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="/static/application/chart.js"></script>
-<script src="http://d3js.org/d3.v3.js"></script>
-<script src="http://platform.twitter.com/widgets.js" charset="utf-8"></script>
-<script>
-
-function buildEntityList(data){
-    for (i = 0; i < data.length; i++){
-        row = "<tr><td><a href=\"/app/entity/?id="+data[i]+"\">"+data[i]+"</a></td></tr>";
-        $("#entities-body").append(row);
-    }
-}
-function buildPage(data){
-    buildEntityList(data['entities'])
-    $("#panel-summary").append("Size of Collection: "+data['size'])
-}
-
-$(document).ready(function(){
-    url = "http://localhost:8888/entities/";
-    $.getJSON(url,function(data) { buildPage(data);});
-});
-</script>
+<script src="/static/application/overview.js">></script>
 </body>
 </html>
