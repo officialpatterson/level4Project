@@ -17,7 +17,8 @@ class TweetsHandler(Handler):
         time = self.get_argument("time", None, strip=False)
         retweetCount = self.get_argument("retweetcount", None, strip=False)
         favouriteCount = self.get_argument("favouritecount", None, strip=False)
-       
+        dimension = self.get_argument("dimension", None, strip=False)
+        print dimension
        #Create query based on url parameters
         sort = []
         
@@ -37,11 +38,16 @@ class TweetsHandler(Handler):
             sort.append(("favourite_count", DESCENDING))
 
 
-
-        if(sort):
-            queryResult = self.classifications.find({"entity": entityid}).sort(sort).limit(limit)
+        if(dimension):
+            query = {"entity": entityid, "class":dimension}
         else:
-            queryResult = self.classifications.find({"entity": entityid}).limit(limit)
+            query = {"entity": entityid}
+        
+        
+        if(sort):
+            queryResult = self.classifications.find(query).sort(sort).limit(limit)
+        else:
+            queryResult = self.classifications.find(query).limit(limit)
         
         
         for c in queryResult:

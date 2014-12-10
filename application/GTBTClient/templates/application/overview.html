@@ -1,51 +1,45 @@
 {% include "application/head.html" %}
 <div id="container">
+    
     <div class="row">
-        <div class="panel panel-default">
-            <div class="panel-body">
-                <h1>Overview</h1>
+        <div class="col-md-6">
+            <div class="panel panel-default">
+                <div class="panel-heading"><h3 class="panel-title">Summary</h3></div><div class="panel-body" id="panel-summary"></div>
             </div>
-        </div>
-    </div>
-    {% if user.is_authenticated %}
-    <div class="row">
-        <div class="col-md-12">
-            
+            {% if user.is_authenticated %}
             <div class="panel panel-default">
                 <div class="panel-heading">
                     <h3 class="panel-title">Entities your Tracking</h3>
                 </div>
+                {%if tracks %}
                 <table class="table table-striped">
-                    <tbody id="tracked-entities-body">
-                        {%for e in entities%}
-                        <tr><td><a href="/app/entity/?id={{e.id}}"></a>{{e.name}}</td></tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-        </div>
-    </div>
-    {%endif%}
-    <div class="row">
-        <div class="col-md-6">
-            <div class="panel panel-default">
-                <div class="panel-heading">
-                    <h3 class="panel-title">Summary</h3>
-                </div>
-                <div class="panel-body" id="panel-summary">
                     
-                </div>
+                    <tbody id="tracked-entities-body">
+                        
+                        {%for e in tracks%}
+                        <tr><td><a href="/app/entity/?id={{e.name}}">{{e.name}}</a></td></tr>
+                        {% endfor %}
+                        
+                    </tbody>
+                    
+                </table>
+                {%else%}
+                <div class="panel-body"><p> You are not tracking any entities </p></div>
+                {%endif%}
             </div>
+            {%endif%}
         </div>
         <div class="col-md-6">
             <div class="panel panel-default">
                 <div class="panel-heading">
-                    <h3 class="panel-title">Collection Growth</h3>
+                    <h3 class="panel-title">Collection Growth Rate</h3>
                 </div>
                 <div class="panel-body">
-                    <p>Summary Graph over time</p>
+                    <div id="growth-chart"</div>
                 </div>
             </div>
+            
+        </div>
         </div>
     </div>
     <div class="row">
@@ -62,11 +56,11 @@
         </div>
     </div>
 </div>
-</div>
 <script src="/static/application/pace.min.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="/static/application/chart.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="/static/application/overview.js">></script>
 </body>
 </html>

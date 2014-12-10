@@ -5,14 +5,26 @@ from django.contrib.auth import authenticate, login, logout
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from forms import UserForm
+from application.models import TrackedEntities
 
 def overview(request):
     context = RequestContext(request)
-    return render_to_response('application/overview.html',{}, context)
+    tracks = None
+    if request.user.is_authenticated():
+        tracks = TrackedEntities.objects.filter(follower=request.user).all()
+    
+    return render_to_response('application/overview.html',{"tracks": tracks }, context)
 
 def entity(request):
     context = RequestContext(request)
-    return render_to_response('application/Entity-Viewer.html',{}, context)
+    entity =  request.GET.get('id')
+    
+    try:
+        isTracked = TrackedEntities.objects.get(follower=request.user, name=request.GET.get('id'))
+    except TrackedEntities.DoesNotExist:
+        isTracked = None
+    
+    return render_to_response('application/Entity-Viewer.html',{'entity':entity, 'isTracked':isTracked}, context)
 
 def search(request):
     context = RequestContext(request)
@@ -21,6 +33,13 @@ def search(request):
 def system(request):
     context = RequestContext(request)
     return render_to_response('application/system.html',{}, context)
+
+def compare(request):
+    context = RequestContext(request)
+    eid1 = request.GET.get('eidone')
+    eid2 = request.GET.get('eidtwo')
+    
+    return render_to_response('application/compare.html',{'eidone': eid1, 'eidtwo': eid2}, context)
 
 def user_login(request):
     context = RequestContext(request)
@@ -107,3 +126,38 @@ def register(request):
             'application/register.html',
             {'user_form': user_form, 'registered': registered},
             context)
+@login_required
+def addtrack(request):
+    vars = {}
+    if request.method == 'POST':
+        user = request.user
+        slug = request.POST.get('slug', None)
+        
+        TrackedEntities.objects.get_or_create(follower=user, name=slug)[0]
+    
+
+
+    return HttpResponse("{success: 1}")
+@login_required
+def untrack(request):
+    vars = {}
+    if request.method == 'POST':
+        user = request.user
+        slug = request.POST.get('slug', None)
+        
+        try:
+            TrackedEntities.objects.get(follower=user, name=slug).delete()
+        except TrackedEntities.DoesNotExist:
+            return HttpResponse("{success: 1}")
+    
+    
+    
+    
+    return HttpResponse("{success: 1}")
+
+@login_required
+def viewtracks(request):
+    vars = {}
+    list = TrackedEntities.objects.all()
+    
+    return HttpResponse(len(list))

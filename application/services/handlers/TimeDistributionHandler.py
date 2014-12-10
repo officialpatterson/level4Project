@@ -19,7 +19,7 @@ class TimeDistributionHandler(Handler):
         reduce = Code("function(key,values){return Array.sum(values)}")
         
        
-        result = self.classifications.map_reduce(map, reduce, "TimeDistributions")
+        result = self.classifications.map_reduce(map, reduce, "TimeDistributions", query={"entity":entityid})
         dist = {}
         for doc in result.find():
             dist[doc['_id']] = doc['value']

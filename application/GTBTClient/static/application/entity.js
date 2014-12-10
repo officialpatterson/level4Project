@@ -4,10 +4,10 @@ function buildStatisticsPanel(stats){
     $("#stats-body").empty();
     for (var key in stats){
         
-        classes.push(key)
-        counts.push(stats[key])
+        classes.push(key);
+        counts.push(stats[key]);
         //below we populate the table of classes.
-        row = "<tr>"+"<td>"+key+"</td>"+"<td>"+stats[key]+"</td>"+"</tr>"
+        row = "<tr>"+"<td>"+key+"</td>"+"<td>"+stats[key]+"</td>"+"</tr>";
         $("#stats-body").append(row);
     }
     var data = {
@@ -36,21 +36,21 @@ function buildLocationPanel(dimensions){
                           async: false
                           }).responseText;
     
-    $.each(dimensions, function() {
-           $('#location-filter').append(
-                                    $("<option></option>").text(this).val(this)
-                                    );
-           });
-    var output = new Array();
-    output = JSON.parse(jsonData);
-    drawGeoChart(output);
+    /*build the option list*/
+    $.each(dimensions, function() {$('#location-filter').append($("<option></option>").text(this).val(this));});
     
-    window.onresize = function(event) {drawGeoChart(output);};
+    /*make table*/
+    $.each(JSON.parse(jsonData).slice(1, -1), function() {row = "<tr>"+"<td>"+this[0]+"</td>"+"<td>"+this[1]+"</td>"+"</tr>";$("#location-table").append(row);});
+    
+    drawGeoChart(JSON.parse(jsonData));
+    
+    window.onresize = function(event) {drawGeoChart(JSON.parse(jsonData));};
     
     $("#location-filter").change(function () {
                                  url =  "http://localhost:8888/entity/"+getUrlParameter("id")+"/dist/";
                                  if($('option:selected').text() != "all"){
-                                 url = "http://localhost:8888/entity/"+getUrlParameter("id")+"/dist/?class="+$('option:selected').text();
+                                    url = "http://localhost:8888/entity/"+getUrlParameter("id")+"/dist/?class="+$('#location-filter').val();
+                                    console.log(url);
                                  }
                                  var jsonData = $.ajax({
                                                        url: url,
@@ -59,6 +59,8 @@ function buildLocationPanel(dimensions){
                                                        }).responseText;
                                  var output = new Array();
                                  output = JSON.parse(jsonData);
+                                 $("#location-table").empty();
+                                 $.each(JSON.parse(jsonData).slice(1, -1), function() {row = "<tr>"+"<td>"+this[0]+"</td>"+"<td>"+this[1]+"</td>"+"</tr>";$("#location-table").append(row);});
                                  drawGeoChart(output);
                                  })
 };
@@ -72,7 +74,7 @@ function sortFunction(a, b) {
 }
 function buildTimePanel(){
     var output = $.ajax({
-                        url: "http://localhost:8888/entity/BMW/disttime/",
+                        url: "http://localhost:8888/entity/"+getUrlParameter("id")+"/disttime/",
                         dataType: 'json',
                         async: false
                         }).responseText;
@@ -88,7 +90,7 @@ function drawLineChart(timedistribution){
     data.addColumn('number', 'tweets');
  
     timedistribution.shift();
-    console.log(timedistribution.length);
+   
     var dataArray = new Array();
     
     $.each(timedistribution, function() {
@@ -114,21 +116,42 @@ function drawGeoChart(data) {
     var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
     chart.draw(data, options);
 }
-function buildTweetsPanel(){
+function buildTweetsPanel(dimensions){
     $.getJSON("http://localhost:8888/entity/"+getUrlParameter("id")+"/tweets/")
         .done(function( tweets ){
              $.each(tweets, function() {
-                   $("#panel-tweets-body").append("<div class=\"panel panel-default panel-success\"><div class=\"panel-body\"> <span class=\"badge\">"+this['class']+"</span><blockquote>"+this['text']+"</blockquote></div><div class=\"panel-footer\"><small>created by: "+this['user']['screen_name']+", created at: "+this['created_at']+"</small></div></div>");
+                   $("#tweets").append("<div class=\"panel panel-default panel-success\"><div class=\"panel-body\"> <span class=\"badge\">"+this['class']+"</span><blockquote>"+this['text']+"</blockquote></div><div class=\"panel-footer\"><small>created by: "+this['user']['screen_name']+", created at: "+this['created_at']+"</small></div></div>");
                     });
              });
     
+    /*add event for dealing with the filtering of tweets by dimension.*/
     
+    $.each(dimensions, function() {$('#tweet-filter').append($("<option></option>").text(this).val(this));});
+    
+    $("#tweet-filter").change(function () {
+                              url =  "http://localhost:8888/entity/"+getUrlParameter("id")+"/tweets/";
+                              if($('option:selected').text() != "all"){
+                              url = "http://localhost:8888/entity/"+getUrlParameter("id")+"/tweets/?dimension="+$('#tweet-filter').val();
+                              }
+                              var jsonData = $.ajax({
+                                                    url: url,
+                                                    dataType: 'json',
+                                                    async: false
+                                                    }).responseText;
+                              var output = new Array();
+                              output = JSON.parse(jsonData);
+                              /*empty the previous contents*/
+                              $("#tweets").empty();
+                              $.each(output, function() {
+                                     $("#tweets").append("<div class=\"panel panel-default panel-success\"><div class=\"panel-body\"> <span class=\"badge\">"+this['class']+"</span><blockquote>"+this['text']+"</blockquote></div><div class=\"panel-footer\"><small>created by: "+this['user']['screen_name']+", created at: "+this['created_at']+"</small></div></div>");
+                                     });
+                              })
 }
 
 function buildPage(entity_data){
-    $("#pgtitle").html(entity_data['entity']);
+   
     buildStatisticsPanel(entity_data['stats']);
-    buildTweetsPanel();
+    buildTweetsPanel(entity_data['classes']);
     buildTimePanel();
     buildLocationPanel(entity_data['classes']);
 }
@@ -145,11 +168,44 @@ function getUrlParameter(sParam){
     }
 }
 
+$('#btnTrack').click(function(){
+                     token = $("[name=csrfmiddlewaretoken]").val();
+                     if($('#btnTrack').val() == "Track"){
+                     
+                     
+                        $.ajax({
+                               type: "POST",
+                               url: "http://localhost:8000/app/addtrack/",
+                               data: {'slug': $(this).attr('name'), 'csrfmiddlewaretoken': token},
+                               dataType: "text",
+                               success: function(response) {
+                               $("<div class=\"alert alert-success alert-dismissible\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button><strong>Success!</strong>Removed Track from Personal Track List</div>").prependTo('body').hide().fadeIn('fast');                               $("#pgtitle").append("<span id=\"trackicon\" class=\"glyphicon glyphicon-ok-circle\"style=\"color:Lime\" aria-hidden=\"true\"></span>");
+                               $('#btnTrack').val("Untrack");
+                               },
+                               error: function(rs, e) {}
+                               });
+                     }else{
+                    
+                     $.ajax({
+                            type: "POST",
+                            url: "http://localhost:8000/app/untrack/",
+                            data: {'slug': $(this).attr('name'), 'csrfmiddlewaretoken': token},
+                            dataType: "text",
+                            success: function(response) {
+                            $("<div class=\"alert alert-success alert-dismissible\" role=\"alert\"><button type=\"button\" class=\"close\" data-dismiss=\"alert\"><span aria-hidden=\"true\">&times;</span><span class=\"sr-only\">Close</span></button><strong>Success!</strong>Removed Track from Personal Track List</div>").prependTo('body').hide().fadeIn('fast');
+                            $("#trackicon").remove();
+                            $('#btnTrack').val("Track");
+                            },
+                            error: function(rs, e) {}
+                            });
+                     }
+                    
+                        })
 
-         
 /*main routine*/
 $(document).ready(function(){
     $.getJSON("http://localhost:8888/entity/"+getUrlParameter("id")).done(function( json ) {buildPage(json);});
-                  
-    $(function () {$('[data-toggle="tooltip"]').tooltip()})
+                  //$('#btnAddTrack').val = getUrlParameter("id");
+                  $(function () {$('[data-toggle="tooltip"]').tooltip()});
+                 
 });

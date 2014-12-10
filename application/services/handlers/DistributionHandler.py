@@ -13,7 +13,7 @@ class DistributionHandler(Handler):
         dimension=self.get_argument("class", None, True)
         
         #MapReduce Function definitions
-        map = Code("function(){emit(this.place.country_code, 1);}")
+        map = Code("function(){emit(this.place.country, 1);}")
         reduce = Code("function(key,values){return Array.sum(values)}")
 
         #The MapReduce Operation

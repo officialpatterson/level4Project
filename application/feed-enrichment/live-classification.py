@@ -33,6 +33,7 @@ def loadTweets():
         for tweet in tweets:
             collection.append((tweet['text'], goldStandardSet[tweet['id']]))
 
+    
     return collection
 
 ###########################	 SUBROUTINES #########################

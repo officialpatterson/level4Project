@@ -24,9 +24,9 @@ class EntityHandler(Handler):
         if not class_aggregate:
             self.send_error(404)
             return
-        
+    
         classes = class_aggregate.keys()
-        response  = {'stats':class_aggregate, 'entity':entityid, 'classes':classes, 'tweets':tweets}
+        response  = {'stats':class_aggregate, 'entity':entityid, 'classes':classes}
         self.set_header("Access-Control-Allow-Origin", "*")
         self.content_type = 'application/json'
         self.write(JSONEncoder().encode(response))
