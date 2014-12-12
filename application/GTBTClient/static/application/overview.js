@@ -61,7 +61,20 @@ function drawLineChart(timedistribution){
     var chart = new google.visualization.LineChart(document.getElementById('growth-chart'));
     chart.draw(data, options);
 }
+$("#btnSearch").click(function(event) {
+                    var v = $("#searchBox").val();
+                   window.location ="entity/?id="+v;
+                   });
+
 $(document).ready(function(){
                   url = "http://localhost:8888/entities/";
                   $.getJSON(url,function(data) { buildPage(data);});
+                  
+                  var notCount = $.ajax({
+                                      url: "http://localhost:8000/app/notifications/",
+                                      dataType: 'json',
+                                      async: false
+                                      }).responseText;
+                  $("#notifications").append(" <span class=\"badge\">"+notCount+"</span></a>");
+                  $("#menu").append(" <span class=\"badge\">"+notCount+"</span></a>");
                   });

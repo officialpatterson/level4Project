@@ -201,10 +201,19 @@ $('#btnTrack').click(function(){
                      }
                     
                         })
-
+$("#btnSearch").click(function(event) {
+                      var v = $("#searchBox").val();
+                      window.location ="/app/entity/?id="+v;
+                      });
+function esd(){
+    $("#container").empty();
+    $("body").append("<div class=\"container\"><div class=\"jumbotron\"><h1>404: Entity does not exist!</h1><p>The entity you were looking for is not in the GTBT system. To add it go to the user menu and select \"Add Entity\".</p></div></div>");
+}
 /*main routine*/
 $(document).ready(function(){
-    $.getJSON("http://localhost:8888/entity/"+getUrlParameter("id")).done(function( json ) {buildPage(json);});
+                  $.getJSON("http://localhost:8888/entity/"+getUrlParameter("id")).done(function( json ) {buildPage(json);}).fail(function() {
+                                                                                                                                  esd();
+                                                                                                                                  });
                   //$('#btnAddTrack').val = getUrlParameter("id");
                   $(function () {$('[data-toggle="tooltip"]').tooltip()});
                  

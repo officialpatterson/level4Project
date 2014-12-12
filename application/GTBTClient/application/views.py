@@ -5,7 +5,7 @@ from django.contrib.auth import authenticate, login, logout
 from django.template import RequestContext
 from django.contrib.auth.decorators import login_required
 from forms import UserForm
-from application.models import TrackedEntities
+from application.models import TrackedEntities, Notifications
 
 def overview(request):
     context = RequestContext(request)
@@ -19,10 +19,12 @@ def entity(request):
     context = RequestContext(request)
     entity =  request.GET.get('id')
     
-    try:
-        isTracked = TrackedEntities.objects.get(follower=request.user, name=request.GET.get('id'))
-    except TrackedEntities.DoesNotExist:
-        isTracked = None
+    isTracked = None
+    if request.user.is_authenticated():
+        try:
+            isTracked = TrackedEntities.objects.get(follower=request.user, name=request.GET.get('id'))
+        except TrackedEntities.DoesNotExist:
+            isTracked = None
     
     return render_to_response('application/Entity-Viewer.html',{'entity':entity, 'isTracked':isTracked}, context)
 
@@ -30,6 +32,10 @@ def search(request):
     context = RequestContext(request)
     return render_to_response('application/search.html',{}, context)
 
+def viewnotifications(request):
+    context = RequestContext(request)
+    notifications = Notifications.objects.filter(user=request.user)
+    return render_to_response('application/notifications.html',{'notifications':notifications}, context)
 def system(request):
     context = RequestContext(request)
     return render_to_response('application/system.html',{}, context)
@@ -138,6 +144,7 @@ def addtrack(request):
 
 
     return HttpResponse("{success: 1}")
+
 @login_required
 def untrack(request):
     vars = {}
@@ -161,3 +168,52 @@ def viewtracks(request):
     list = TrackedEntities.objects.all()
     
     return HttpResponse(len(list))
+
+@login_required
+def notifications(request):
+    
+    try:
+        notifications = Notifications.objects.filter(user=request.user, read=False).all()
+        num = len(notifications)
+    except Notifications.DoesNotExist:
+        num =0
+
+    return HttpResponse(num)
+
+@login_required
+def addnotification(request):
+    user = request.user
+ 
+    entity = request.GET.get('entity')
+    msg = request.GET.get('msg')
+    Notifications.objects.get_or_create(user=user, entity=entity, message=msg)
+
+    num = len(Notifications.objects.all())
+    return HttpResponse(num)
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

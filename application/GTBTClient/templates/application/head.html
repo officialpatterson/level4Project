@@ -9,11 +9,7 @@
                         <link rel="stylesheet" href="/static/application/theme.css">
                     <link rel="stylesheet" href="/static/application/rickshaw.css">
                         <link href="/static/application/loading.css" rel="stylesheet" />
-    <script>
-        function doSearch(){
-            console.log("searched");
-        }
-    </script>
+
     </head>
     <body>
         <nav class="navbar navbar-default" role="navigation">
@@ -38,11 +34,12 @@
                     </ul>
 			<ul class="nav navbar-nav navbar-right">
 			{% if user.is_authenticated %}
-        			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown">{{ user.username }}<span class="caret"></span></a>
+        			<li class="dropdown"><a href="#" class="dropdown-toggle" data-toggle="dropdown" id="menu">{{ user.username }}<span class="caret"></span></a>
           			<ul class="dropdown-menu" role="menu">
                         <li><a href="/app/viewtracks/">Manage Tracks</a></li>
                         <li><a href="/app/compare/">Compare</a></li>
-                        <li><a href="/app/notifications/">Notifications</a></li>
+                        <li><a href="/app/vwn/" id="notifications">Notifications</a>
+</a></li>
            				<li class="divider"></li>
                         <li><a href="/app/logout">Logout</a></li>
           			</ul>
@@ -52,12 +49,12 @@
 			{% endif %}
      			</ul>
 			
-                    <form class="navbar-form navbar-right" id="search" role="search" onsubmit="doSearch()">
+                    <form class="navbar-form navbar-right" id="search" role="search" action="">
                         
                         <div class="form-group">
-                            <input type="text" class="form-control" placeholder="Search">
-                                </div>
-                        <button type="submit" class="btn btn-default">Submit</button>
+                            <input id="searchBox" type="text" class="form-control" placeholder="Search">
+                        </div>
+                        <input id="btnSearch" type="button" class="btn btn-default" value="Quick Find"/>
                     </form>
                     
                 </div><!-- /.navbar-collapse -->

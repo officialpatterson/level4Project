@@ -96,6 +96,10 @@ function initialiseFormComponents(){
               $.each(data['entities'],function(){$("#secondEntity").append($("<option></option>").text(this).val(this));});
               });
 }
+$("#btnSearch").click(function(event) {
+                      var v = $("#searchBox").val();
+                      window.location ="/app/entity/?id="+v;
+                      });
 /*main routine*/
 $(document).ready(function(){
     initialiseFormComponents();
