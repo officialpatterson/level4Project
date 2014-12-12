@@ -18,7 +18,7 @@ class TweetsHandler(Handler):
         retweetCount = self.get_argument("retweetcount", None, strip=False)
         favouriteCount = self.get_argument("favouritecount", None, strip=False)
         dimension = self.get_argument("dimension", None, strip=False)
-        print dimension
+     
        #Create query based on url parameters
         sort = []
         

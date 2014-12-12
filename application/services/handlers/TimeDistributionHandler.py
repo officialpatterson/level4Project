@@ -25,7 +25,7 @@ class TimeDistributionHandler(Handler):
             dist[doc['_id']] = doc['value']
         
         response  = [('time', 'count')]+dist.items()
-        print response
+     
         self.set_header("Access-Control-Allow-Origin", "*")
         self.content_type = 'application/json'
         self.write(JSONEncoder().encode(response))

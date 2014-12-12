@@ -3,8 +3,7 @@
 # the output of the script is a collection of tuples that contain the tweet text and the reputation.
 from Twitter4AP import TwitterRest
 from pymongo import errors, MongoClient
-import json, csv, nltk, time, random
-
+import json, csv, nltk, time, random, requests
 from nltk.corpus import stopwords
 from nltk.tokenize import RegexpTokenizer
 
@@ -87,7 +86,6 @@ with open("entities.tsv") as tsv:
 
 print 'Classifying...'
 while True:
-    print 'iterating'
     for e in entityList:
         result = s.search({'q':e, 'lang':'en'})
         statuses = json.loads(result.text)
@@ -96,8 +94,13 @@ while True:
             tweet = cleanTweet(status['text'])
             label = classifier.classify(tweet_features(tweet, all_words))
             status['class'] = label
-            collection = db.classifications
-            collection.insert(status)
+            
+            payload = {'tweet': json.dumps(status)}
+           
+            #add tweet to database using post request
+            r = requests.post("http://localhost:8888/addtweet/", data=payload)
+           
+            
             with open("log.txt","a") as log:
                 log.write(label + '\n')
     time.sleep(180)

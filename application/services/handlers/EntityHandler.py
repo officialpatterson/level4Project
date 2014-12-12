@@ -9,12 +9,11 @@ class EntityHandler(Handler):
             self.send_error()
             return
         
-        tweets = []
+    
         class_aggregate = {}
         
-        print 'entitid',entityid
         for c in self.classifications.find({"entity": entityid}):
-            tweets.append(c)
+           
             #if class already exists just increment the value  else create new class
             if c['class'] in class_aggregate:
                 class_aggregate[c['class']] = class_aggregate[c['class']] + 1

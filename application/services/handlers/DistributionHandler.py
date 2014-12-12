@@ -27,7 +27,7 @@ class DistributionHandler(Handler):
             dist[doc['_id']] = doc['value']
         
         response  = [('country', 'tweets')]+dist.items()
-        print response
+    
         self.set_header("Access-Control-Allow-Origin", "*")
         self.content_type = 'application/json'
         self.write(JSONEncoder().encode(response))
