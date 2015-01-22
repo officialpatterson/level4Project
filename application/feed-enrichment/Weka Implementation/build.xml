@@ -20,8 +20,8 @@
         </javac>
     </target>
     
-    <target name="run" depends="compile">
-        <java classname="TweetClassifier" fork="true">
+    <target name="runsentiment" depends="compile">
+        <java classname="TweetSentimentClassifier" fork="true">
             <classpath>
                 <pathelement location="build" />
                 <path refid="tpcp" />
