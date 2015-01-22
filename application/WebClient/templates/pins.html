@@ -1,0 +1,38 @@
+{% include "head.html" %}
+
+<div class="container-fluid">
+    <ol class="breadcrumb">
+        <li><a href="/dashboard/">Dashboard</a></li>
+        <li class="active" id="pgtitle">Pins<span id="trackicon" class="glyphicon glyphicon-ok-circle"style="color:Lime" aria-hidden="true"></span></li>
+    </ol>
+    <div class="row" id="pgheader"><div class="col-md-12"><h1>Pinned Items</h1></div></div>
+    </div>
+    <hr/>
+{%for tweet in tweets%}
+<div class="col-md-4">
+    <div class="panel panel-default">
+        <div class="panel-body">
+            <div class="row">
+                <div class="col-md-11">{{tweet['object']['tweet']['text']}}</div>
+                <div class="col-md-1">
+                    <a  onclick="pushPin('{{tweet['object']['_id']}}');"><span class="glyphicon glyphicon-pushpin"></span></a>
+                    <a href="#"><span class="glyphicon glyphicon-share-alt"></span></a>
+                    {%if tweet['object']['gold'] == 'True'%}
+                    <span class="glyphicon glyphicon-star isgold-icon"></span>
+                    {%else%}
+                    <span class="glyphicon glyphicon-star"></span>
+                    {%end%}
+                </div>
+            </div>
+            <hr><small>{{tweet['object']['dimension']}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author: <a href="">@{{tweet['object']['tweet']['user']['screen_name']}}</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</small>
+        </div>
+    </div>
+</div>
+{%end%}
+</div>
+<script src="/static/application/pace.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="/static/application/js/pins.js"></script>
+</body>
+</html>

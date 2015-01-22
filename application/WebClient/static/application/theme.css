@@ -1,0 +1,61 @@
+.navbar, .panel{
+    -webkit-border-radius: 0 ;
+    -moz-border-radius: 0 ;
+    border-radius: 0 ;
+}
+
+
+.navbar-inverse{
+    color: #ffffff;
+    background-color: #1F2629;
+    border: none;
+}
+.navbar-inverse .navbar-brand {
+    color: #ffffff;
+}
+.navbar .form-control{
+    border-radius:50px;
+    -moz-border-radius:50px;
+    -webkit-border-radius:50px;
+    background-color: #101A21;
+    border: none;
+}
+
+body{
+    background-color: #ECECF2;
+    font-family: "Helvetica";
+}
+#topics .form-control{
+    border-radius:50px;
+    -moz-border-radius:50px;
+    -webkit-border-radius:50px;
+    background-color: #fdfdfd;
+    border: solid 1px #8d8d8d;
+}
+.axis path, .axis line {
+    fill: none;
+    stroke: #000;
+    shape-rendering: crispEdges;
+}
+
+.x.axis path {
+    display: none;
+}
+
+.line {
+    fill: none;
+    stroke: steelblue;
+    stroke-width: 1.5px;
+}
+.login-icon{
+    color: LightSkyBlue;
+}
+.logout-icon{
+    color: Lime;
+}
+.isgold-icon{
+    color: #Fdd017;
+}
+.green-sentiment{
+border-bottom: 3px solid Lime;
+}

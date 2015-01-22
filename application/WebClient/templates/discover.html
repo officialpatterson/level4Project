@@ -1,0 +1,30 @@
+{% include "head.html" %}
+
+<div class="container-fluid">
+    <ol class="breadcrumb">
+        <li><a href="/app/entities/">Discover</a></li>
+    </ol>
+    <div class="row" id="entities">
+        <div class="page-header text-center"><h1>Entities</h1></div>
+        <hr/>
+        {%if entities%}
+        {%for entity in entities%}
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-body text-center">
+                    <a href="/entity/{{entity}}/"><strong>{{entity}}</strong></a>
+                </div>
+            </div>
+        </div>
+        {%end%}
+        {% else%}
+        <strong>No entities Found!</strong>
+        {%end%}
+    </div>
+</div>
+<script src="/static/application/pace.min.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="/static/application/entities.js"></script>
+</body>
+</html>

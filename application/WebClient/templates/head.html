@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="utf-8">
+            <meta http-equiv="X-UA-Compatible" content="IE=edge">
+                <meta name="viewport" content="width=device-width, initial-scale=1">
+                    <title>Good Tweet, Bad Tweet</title>
+                    <link rel="stylesheet" href="/static/application/dist/css/bootstrap.min.css">
+                        <link rel="stylesheet" href="/static/application/theme.css">
+                    <link rel="stylesheet" href="/static/application/rickshaw.css">
+                        <link href="/static/application/loading.css" rel="stylesheet" />
+                        
+    </head>
+    <body>
+        <nav class="navbar navbar-inverse" role="navigation">
+            <div class="container-fluid">
+                <!-- Brand and toggle get grouped for better mobile display -->
+                <div class="navbar-header">
+                    <a class="navbar-brand" href="/dashboard/"><span class="glyphicon glyphicon-fire logo" aria-hidden="true"></span></a>
+                    {%if current_user %}
+                    <a class="navbar-brand" href="/dashboard/">{{current_user}}</a>
+                    {% end %}
+                </div>
+                
+                
+                <form class="navbar-form navbar-right" action="app/entity/" role="search" method="get">
+                    <div class="form-group  has-feedback  has-feedback-right">
+                        <div class="the-basics">
+                        <input  id="search" name="id" type="text" class="form-control typeahead" placeholder="Enter Entity">
+                        </div>
+                            <i class="glyphicon glyphicon-search form-control-feedback"></i>
+                    </div>
+                </form>
+                <ul class="nav navbar-nav navbar-right">
+                    {%if current_user %}
+                    <li><a class="navbar-brand" href="/auth/"><span class="glyphicon glyphicon-off logout-icon" aria-hidden="true"></span></a></li>
+                    <li><a class="navbar-brand" href="/track/"><span class="glyphicon glyphicon-plus" aria-hidden="true"></span></a></li>
+                    <li><a class="navbar-brand" href="/pins/"><span class="glyphicon glyphicon-pushpin" aria-hidden="true"></span></a></li>
+                    {%else%}
+                    <li><a class="navbar-brand" href="/auth/"><span class="glyphicon glyphicon-off login-icon" aria-hidden="true"> </span></a></li>
+                    {% end %}
+                </ul>
+                    
+            </div><!-- /.container-fluid -->
+        </nav>
