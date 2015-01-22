@@ -50,6 +50,11 @@ coverage.xml
 #temp files
 *~
 
+#data files
+*.csv
+*.tsv
+*.json
+
 # Sphinx documentation
 docs/_build/
 
