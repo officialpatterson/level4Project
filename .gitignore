@@ -54,7 +54,9 @@ coverage.xml
 *.csv
 *.tsv
 *.json
-
+*.arff
+*.zip
+*.tar
 # Sphinx documentation
 docs/_build/
 
