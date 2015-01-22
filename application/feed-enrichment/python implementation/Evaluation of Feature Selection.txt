@@ -1,0 +1,43 @@
+Testing was conducted using the collection of 2048 tweets provided . The collection was split so that 75% of the collection was used for training and 25% was used for determining the accuracy. The accuracy was calculated using the function provided by the NLTK library.
+
+first method - 0.46875
+	use text terms as features,
+	tokenise and stem
+second method - 0.470703125
+	use text terms as features
+	tokenise and stem
+	remove urls
+274205
+2193
+third method - 0.53125
+	use text terms as features
+	use retweets as features
+	tokenise and stem
+	remove urls
+
+fourth method - 0.537109375
+	use text terms as features
+	use favourites as features
+	tokenise and stem
+	remove urls
+
+fifth method- 0.5390625
+	use text terms as features
+	use favourites as features
+	use retweets as features
+	tokenise and stem
+	remove urls
+
+sixth method - 0.544921875
+	use text terms as features
+	use favourites as features
+	use retweets as features
+	tokenise and stem
+	remove urls
+	remove all tokens with punctuation
+
+A3fter the above was applied, a larger collection was used for training and evaluation. This collection was 4241 tweets consisting of tweets obtained from Graham and tweets labelled using the crowdsourcing platform CrowdFlower.
+
+This large training set, increased the models accuracy to 0.83. 
+
+The next step is to remove the entity name during tokenisation as the entity BMW was showing up the most informative feature under Products & Services. Also, stemming can be improved as ‘chines’ and ‘china’ both occur as terms however they both have the same meaning, and also have similarly descriptive features.
