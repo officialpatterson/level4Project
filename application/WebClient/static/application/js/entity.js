@@ -102,8 +102,6 @@ function LocationDistributionPanel(entity){
               drawGeoChart(dimensions);
               
               
-              
-              
               window.onresize = function(event) {drawGeoChart(dimensions);};
 
     }); //end getJSON

@@ -29,6 +29,15 @@
         </java>
     </target>
     
+    <target name="runclassify" depends="compile">
+        <java classname="TweetClassifier" fork="true">
+            <classpath>
+                <pathelement location="build" />
+                <path refid="tpcp" />
+            </classpath>
+        </java>
+    </target>
+    
     <target name="runcrawl" depends="compile">
         <java classname="TwitterCrawler" fork="true">
             <classpath>

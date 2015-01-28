@@ -1,7 +1,16 @@
+/*using Naive Bayes Algorithm to classify into 7 dimensions (Undefined has been removed)
+    1. remove urls
+    2. lower case
+    3. tokenize on non-alphabetic characters
+    4. stem/remove stopwords
+    5. remove terms with TF<2
+    6. output word counts, vector=[0,2,3,1,1,1,10]
+ */
 import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.File;
+import java.util.Random;
 import weka.classifiers.Classifier;
 import weka.classifiers.Evaluation;
 import weka.classifiers.evaluation.NominalPrediction;
@@ -14,6 +23,8 @@ import weka.classifiers.bayes.NaiveBayes;
 import weka.classifiers.bayes.NaiveBayesMultinomial;
 import weka.classifiers.bayes.NaiveBayesMultinomialText;
 import weka.core.Instances;
+import weka.core.Instance;
+import weka.core.Attribute;
 import weka.core.stemmers.SnowballStemmer;
 import weka.core.stopwords.WordsFromFile;
 import weka.core.stopwords.*;
@@ -24,6 +35,10 @@ import weka.filters.unsupervised.attribute.*;
 import weka.core.tokenizers.WordTokenizer;
 
 public class TweetClassifier {
+    
+    Filter filter;
+    Classifier classifier;
+    
     public static BufferedReader readDataFile(String filename) {
         BufferedReader inputReader = null;
         
@@ -35,12 +50,41 @@ public class TweetClassifier {
         
         return inputReader;
     }
-    
-    public static void main(String[] args) throws Exception {
+    public static Filter createFilter(){
+        StringToWordVector filter = new StringToWordVector();
+        
+        //lower the document text case
+        filter.setLowerCaseTokens(true);
+        
+        filter.setOutputWordCounts(true);
+        
+        //tokenize
+        WordTokenizer tokenizer = new WordTokenizer();
+        tokenizer.setDelimiters(".,;:\'\"()0123456789*-+`/@&}\\?!# ");
+        filter.setTokenizer(tokenizer);
+
+        
+        filter.setMinTermFreq(2);
+        
+        filter.setPeriodicPruning(-1.0);
+        
+        //apply stemming
+        SnowballStemmer stemmer = new SnowballStemmer();
+        filter.setStemmer(stemmer);
+        
+        filter.setStopwordsHandler(new Rainbow());
+        
+        
+        
+     
+        
+        return filter;
+    }
+    public TweetClassifier() throws Exception{
         
         //load ARFF file
         System.out.print("Loading Data...");
-        BufferedReader datafile = readDataFile("txtfavrt.arff");
+        BufferedReader datafile = readDataFile("data/txtfavrt70.arff");
         ArffReader arff = new ArffReader(datafile);
         
         Instances data = arff.getData();
@@ -48,71 +92,32 @@ public class TweetClassifier {
         
         System.out.println("...Done.");
         
-        
-        
-        StringToWordVector filter = new StringToWordVector();
+        filter = TweetClassifier.createFilter();
         filter.setInputFormat(data);
-        
-        filter.setTFTransform(true);
-        
-        //lower the document text case
-        filter.setLowerCaseTokens(true);
-        
-        //use term frequencies
-        filter.setMinTermFreq(2);
-        
-        filter.setOutputWordCounts(true);
-        
-        filter.setPeriodicPruning(-1.0);
-        //apply stemming
-        SnowballStemmer stemmer = new SnowballStemmer();
-        filter.setStemmer(stemmer);
-        
-        filter.setStopwordsHandler(new Rainbow());
-        
-        //tokenize
-        WordTokenizer tokenizer = new WordTokenizer();
-        tokenizer.setDelimiters(".,;:\'\"()0123456789*-+`/@&}\\?!# ");
-        filter.setTokenizer(tokenizer);
-        
-        filter.setWordsToKeep(300000);
-        
-        
-       
-        
-        
-        
         Instances dataFiltered = Filter.useFilter(data, filter);
         
-        System.out.println("Tokenisation?\t"+filter.getTokenizer().getClass().getSimpleName());
-        System.out.println("Stopwords?\t"+filter.getStopwordsHandler().getClass().getSimpleName());
-        System.out.println("Stemming?\t"+filter.getStemmer().getClass().getSimpleName());
         
-        
-        //use PERCENTAGE Split
-        int trainSize = (int) Math.round(dataFiltered .numInstances() * 0.75);
-        int testSize = dataFiltered .numInstances() - trainSize;
-        Instances train = new Instances(dataFiltered , 0, trainSize);
-        Instances test = new Instances(dataFiltered , trainSize, testSize);
-        
-        //Instantiate new classifier
-        Classifier classifier = new RandomForest();
-        
-        
-        //train the classifier
-        System.out.print("Building classifier model using "+classifier.getClass().getSimpleName()+"...");
-        classifier.buildClassifier(train);
-        System.out.println("...Done!");
+        /*instantiate classifier*/
+        classifier = new RandomForest();
+        classifier.buildClassifier(dataFiltered);
         
         //Evaluate Classifier
         System.out.print("Evaluating...");
-        Evaluation eval = new Evaluation(train);
-        eval.evaluateModel(classifier, test);
+        Evaluation eval = new Evaluation(dataFiltered);
+        eval.crossValidateModel(classifier, dataFiltered, 10, new Random(1));
         System.out.println("Complete!");
         
-        //print results
-        System.out.println(eval.toSummaryString());
-        System.out.println("Weighted Precision:\t"+eval.weightedPrecision());
+        
+        System.out.println("Percent correct: "+ Double.toString(eval.pctCorrect()));
+        
+    }
+    public String classify(){
+        return null;
+    }
+    public static void main(String[] args) throws Exception {
+        
+        
+        TweetClassifier tc = new TweetClassifier();
         
         
     }

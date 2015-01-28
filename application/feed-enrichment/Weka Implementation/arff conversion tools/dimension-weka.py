@@ -42,10 +42,10 @@ with open('txtfavrt.arff', 'w') as f:
     print("@ATTRIBUTE text string", file=f)
     print("@ATTRIBUTE retweets numeric", file=f)
     print("@ATTRIBUTE favorites numeric", file=f)
-    print("@ATTRIBUTE dimension {\"Undefined\", \"Governance\", \"Products & Services\", \"Performance\", \"Workplace\", \"Citizenship\", \"Innovation\", \"Leadership\"}", file=f)
+    print("@ATTRIBUTE dimension {, \"Governance\", \"Products & Services\", \"Performance\", \"Workplace\", \"Citizenship\", \"Innovation\", \"Leadership\"}", file=f)
     print("@data", file=f)
     for (tweet, label) in tweets:
-        if label != "Undefined":
+        if label !="Undefined":
             escapedtext = tweet['text'].replace('"', r'').replace('\n', r'').replace('\r', r'')
             text = re.sub(r'\w+:\/{2}[\d\w-]+(\.[\d\w-]+)*(?:(?:\/[^\s/]*))*', '', escapedtext)
             print("\""+text+"\", "+str(tweet['favorite_count'])+", "+str(tweet['retweet_count'])+", "+"\""+label+"\"", file=f)

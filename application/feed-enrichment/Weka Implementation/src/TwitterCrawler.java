@@ -91,15 +91,20 @@ public class TwitterCrawler{
             System.out.println(entity);
             for (Status status : result.getTweets()) {
                 String json = TwitterObjectFactory.getRawJSON(status);
-                JSONObject t = new JSONObject(json);
-                String text = t.getString("id_str");
-                System.out.println(text);
                 
-                DBObject dbObject = (DBObject)JSON.parse(json);
+                
+                /*build document*/
+                JSONObject document = new JSONObject();
+                document.put("dimension","Undefined");
+                document.put("entity", entity);
+                document.put("tweet", json);
+                
+                /*insert document*/
+                DBObject dbObject = (DBObject)JSON.parse(document.toString());
                 collection.insert(dbObject);
                 
             }
-            Thread.sleep(5000); //wait 2.5 minutes
+            Thread.sleep(5000); //wait 5 seconds
         }
         
     }

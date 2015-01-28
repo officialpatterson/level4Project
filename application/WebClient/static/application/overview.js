@@ -1,5 +1,5 @@
 
-function buildPage(data){
+function buildPage(){
     buildTimePanel();
     
 }
@@ -12,17 +12,26 @@ function sortFunction(a, b) {
     }
 }
 function buildTimePanel(){
+    var timeportion=24;
+    renderLineChart(timeportion);
+    
+    window.onresize = function(event) {renderLineChart(timeportion);};
+    
+    $('#time-filter').on('change', function (e) {
+                         console.log(this.value);
+                  renderLineChart(this.value);
+                    
+                   });
+}
+function renderLineChart(timeportion){
     var output = $.ajax({
-                        url: "http://localhost:8888/entity/BMW/disttime/",
+                        url: "http://localhost:9000/api/timedistribution/?division="+timeportion,
                         dataType: 'json',
                         async: false
                         }).responseText;
     var timedistribution = JSON.parse(output);
-    drawLineChart(timedistribution);
-    window.onresize = function(event) {drawLineChart(timedistribution);};
-}
-google.load("visualization", "1", {packages:["corechart"]});
-function drawLineChart(timedistribution){
+  
+    
     // Create the data table.
     var data = new google.visualization.DataTable();
     data.addColumn('datetime', 'time');
@@ -39,21 +48,18 @@ function drawLineChart(timedistribution){
     dataArray.sort(sortFunction);
     data.addRows(dataArray);
     
-    
-    
-    // Set chart options
     var options = {};
     
     // Instantiate and draw our chart, passing in some options.
     var chart = new google.visualization.LineChart(document.getElementById('growth-chart'));
     chart.draw(data, options);
 }
+google.load("visualization", "1", {packages:["corechart"]});
 
 
 
 $(document).ready(function(){
-                  url = "http://localhost:8888/entities/";
-                  $.getJSON(url,function(data) { buildPage(data);});
-                  
+                  buildPage();
+            
                   });
                  
