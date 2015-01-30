@@ -1,7 +1,9 @@
 from bson.objectid import ObjectId
-import json
+import json, datetime
 class JSONEncoder(json.JSONEncoder):
-    def default(self, o):
-        if isinstance(o, ObjectId):
-            return str(o)
-        return json.JSONEncoder.default(self, o)
+    def default(self, obj):
+        if isinstance(obj, datetime.datetime):
+            encoded_object = list(obj.timetuple())[0:6]
+        else:
+            encoded_object =json.JSONEncoder.default(self, obj)
+        return encoded_object

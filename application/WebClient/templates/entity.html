@@ -1,10 +1,15 @@
 {% include "head.html" %}
 
 <div class="container-fluid">
+    
     <ol class="breadcrumb">
         <li><a href="/dashboard/">Dashboard</a></li>
         <li class="active" id="pgtitle">{{entity}} {%if tracked%}<span id="trackicon" class="glyphicon glyphicon-ok-circle"style="color:Lime" aria-hidden="true"></span>{%end%}</li>
     </ol>
+    <form action="" method="GET">
+        <label for="timeperiod">Number of days to analyse</label>
+    <input type="text" class="form-control" id="timeperiod" name="timeperiod" value="{{timeperiod}}">
+    </form>
     <div class="row" id="pgheader"><div class="col-md-12"><h1>{{entity}}</h1></div></div>
     <div class="row">
         <div class="col-md-8">

@@ -9,8 +9,9 @@ function sortFunction(a, b) {
         return (a[0] < b[0]) ? -1 : 1;
     }
 }
-function tweetRatePanel(entity){
-    $.getJSON("http://localhost:9000/api/timedistribution/",{"entity":entity, "period":timeperiod},function(timedistribution) {
+function tweetRatePanel(entity, dimension){
+    console.log(dimension);
+    $.getJSON("http://localhost:9000/api/timedistribution/",{"entity":entity, "period":timeperiod, "dimension":dimension},function(timedistribution) {
   
         
         drawLineChart(timedistribution);
@@ -48,43 +49,6 @@ function drawLineChart(timedistribution){
     var chart = new google.visualization.LineChart(document.getElementById('TimeChart'));
     chart.draw(data, options);
 }
-function dimensionDistributionPanel(entity){
-    $.getJSON("http://localhost:9000/api/dimensiondistribution/",{"entity":entity, "period":timeperiod},function(dimensions) {
-              
-              $("#stats-body").empty();
-              classes = new Array();
-              counts = new Array();
-              for (var key in dimensions){
-                  
-                  //below we populate the table of classes.
-                  row = "<tr>"+"<td><a href=\""+key+"/\">"+key+"</a></td>"+"<td>"+dimensions[key]+"</td>"+"</tr>";
-                  $("#stats-body").append(row);
-              
-                classes.push(key);
-                counts.push(dimensions[key]);
-
-              }
-              
-              var data = {
-              labels: classes,
-              datasets: [
-                         {
-                         label: "class stats",
-                         fillColor: "rgba(151,187,205,0.5)",
-                         strokeColor: "rgba(151,187,205,0.8)",
-                         highlightFill: "rgba(151,187,205,0.75)",
-                         highlightStroke: "rgba(151,187,205,1)",
-                         data: counts
-                         }
-                         ]
-              };
-              Chart.defaults.global.responsive = true;
-              //Chart.defaults.global.responsive = true;
-              var ctx = document.getElementById("myChart").getContext("2d");
-              var myBarChart = new Chart(ctx).Bar(data);
-              
-    }); //end getJSON
-}
 
 function drawGeoChart(dimension){
     var data = google.visualization.arrayToDataTable(dimension);
@@ -93,8 +57,8 @@ function drawGeoChart(dimension){
     var chart = new google.visualization.GeoChart(document.getElementById('locationChart'));
     chart.draw(data, options);
 }
-function LocationDistributionPanel(entity){
-    $.getJSON("http://localhost:9000/api/locationdistribution/",{"entity":entity, "period": timeperiod},function(dimensions) {
+function LocationDistributionPanel(entity, dimension){
+    $.getJSON("http://localhost:9000/api/locationdistribution/",{"entity":entity, "period": timeperiod, "dimension":dimension},function(dimensions) {
               
               /*build the option list*/
               $.each(dimensions, function() {$('#location-filter').append($("<option></option>").text(this).val(this));});
@@ -107,16 +71,21 @@ function LocationDistributionPanel(entity){
 
     }); //end getJSON
 };
-function getEntityNameFromUrl() {
+function getEntityNameFromUrl(string) {
+    var url = window.location.href;
+    var parts = url.split("/");
+    var entity = parts[parts.length - 3];
+    return entity
+}
+function getDimensionNameFromUrl(string) {
     var url = window.location.href;
     var parts = url.split("/");
     var entity = parts[parts.length - 2];
-    console.log(entity);
-    return entity;
+    return entity
 }
 $(document).ready(function(){
                   entity = getEntityNameFromUrl();
-                  dimensionDistributionPanel(entity);
-                  LocationDistributionPanel(entity);
-                  tweetRatePanel(entity);
+                  dimension = getDimensionNameFromUrl();
+                  LocationDistributionPanel(entity, dimension);
+                  tweetRatePanel(entity, dimension);
                   });

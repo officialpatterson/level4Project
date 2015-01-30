@@ -5,6 +5,10 @@
         <li><a href="/dashboard/">Dashboard</a></li>
         <li class="active" id="pgtitle">{{entity}} / {{dimension}} {%if tracked%}<span id="trackicon" class="glyphicon glyphicon-ok-circle"style="color:Lime" aria-hidden="true"></span>{%end%}</li>
     </ol>
+    <form action="" method="GET">
+        <label for="timeperiod">Number of days to analyse</label>
+        <input type="text" class="form-control" id="timeperiod" name="timeperiod" value="{{timeperiod}}">
+            </form>
     <div class="row" id="pgheader"><div class="col-md-12"><h1>{{entity}}<small>{{dimension}}</small></h1></div></div>
     <div class="row">
         <div class="col-md-8">
@@ -107,6 +111,6 @@
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
 <script src="/static/application/chart.js"></script>
-<script src="/static/application/js/entity.js"></script>
+<script src="/static/application/js/entitydimension.js"></script>
 </body>
 </html>
