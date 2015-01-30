@@ -1,6 +1,7 @@
 from handlers.auth import LoginHandler, RegisterHandler
 from handlers.DashboardHandler import DashboardHandler
 from handlers.EntityHandler import EntityHandler
+from handlers.EntityDimensionHandler import EntityDimensionHandler
 from handlers.ErrorHandler import ErrorHandler
 from handlers.TrackHandler import TrackHandler
 from handlers.PinHandler import PinHandler
@@ -15,6 +16,7 @@ urls = [
         (r"/auth/", LoginHandler),
         (r"/dashboard/", DashboardHandler),
         (r"/entity/([A-Za-z0-9%]+)/", EntityHandler),
+        (r"/entity/([A-Za-z0-9%]+)/([A-Za-z0-9%&]+)/", EntityDimensionHandler),
         (r"/track/", TrackHandler),
         (r"/register/", RegisterHandler),
         (r"/discover/", DiscoverHandler),

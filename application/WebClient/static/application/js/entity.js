@@ -56,7 +56,7 @@ function dimensionDistributionPanel(entity){
               for (var key in dimensions){
                   
                   //below we populate the table of classes.
-                  row = "<tr>"+"<td>"+key+"</td>"+"<td>"+dimensions[key]+"</td>"+"</tr>";
+                  row = "<tr>"+"<td><a href=\""+key+"/\">"+key+"</a></td>"+"<td>"+dimensions[key]+"</td>"+"</tr>";
                   $("#stats-body").append(row);
               
                 classes.push(key);
@@ -106,14 +106,15 @@ function LocationDistributionPanel(entity){
 
     }); //end getJSON
 };
-function BeforeLastPartofURL() {
+function getEntityNameFromUrl() {
     var url = window.location.href;
     var parts = url.split("/");
-    var beforeLast = parts[parts.length - 2]; //keep in mind that since array starts with 0, last part is [length - 1]
-    return beforeLast;
+    var entity = parts[parts.length - 2];
+    console.log(entity);
+    return entity;
 }
 $(document).ready(function(){
-                  entity = BeforeLastPartofURL()
+                  entity = getEntityNameFromUrl();
                   dimensionDistributionPanel(entity);
                   LocationDistributionPanel(entity);
                   tweetRatePanel(entity);

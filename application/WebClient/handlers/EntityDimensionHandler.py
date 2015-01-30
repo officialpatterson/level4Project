@@ -3,17 +3,17 @@ from pymongo import MongoClient, ASCENDING, DESCENDING
 from tornado.web import RequestHandler, authenticated
 from util.JsonEncoder import JSONEncoder
 import json
-class EntityHandler(RequestHandler):
+class EntityDimensionHandler(RequestHandler):
     
     def get_current_user(self):
         return self.get_secure_cookie("user")
     
     @authenticated
-    def get(self, entityid):
+    def get(self, entityid, dimension):
         client = MongoClient()
         
-        print "entity: ",entityid
-        
+        print "entity : ", entityid
+        print "dimension : ", dimension
         #check entity is in the entity list
         if not client.gtbt.entities.find_one({"short": entityid}):
             self.redirect("/404/")
@@ -21,7 +21,7 @@ class EntityHandler(RequestHandler):
         
         #create a list of tweets
         classifications = client.gtbt.classifications
-        results = classifications.find({"entity": entityid}).limit(10)
+        results = classifications.find({"entity": entityid, "dimension":dimension}).limit(10)
         
         tweets = []
 
@@ -31,7 +31,7 @@ class EntityHandler(RequestHandler):
 
         #create list of alerts
         alerts = client.gtbt.alerts
-        alertsdbcursor = alerts.find({"entity": entityid}).limit(10)
+        alertsdbcursor = alerts.find({"entity": entityid, "dimension":dimension}).limit(10)
         
         alerts = []
         for c in alertsdbcursor:
@@ -41,4 +41,4 @@ class EntityHandler(RequestHandler):
         isTracked = client.gtbt.tracks.find_one({"entity": entityid, "username":self.get_current_user()})
 
         #send response to client
-        self.render("entity.html", tracked=isTracked, entity=entityid, tweets=tweets, alerts = alerts)
+        self.render("entitydimension.html", tracked=isTracked, entity=entityid, dimension=dimension, tweets=tweets, alerts = alerts)

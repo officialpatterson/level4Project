@@ -1,0 +1,112 @@
+{% include "head.html" %}
+
+<div class="container-fluid">
+    <ol class="breadcrumb">
+        <li><a href="/dashboard/">Dashboard</a></li>
+        <li class="active" id="pgtitle">{{entity}} / {{dimension}} {%if tracked%}<span id="trackicon" class="glyphicon glyphicon-ok-circle"style="color:Lime" aria-hidden="true"></span>{%end%}</li>
+    </ol>
+    <div class="row" id="pgheader"><div class="col-md-12"><h1>{{entity}}<small>{{dimension}}</small></h1></div></div>
+    <div class="row">
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="panel-time"><h4 class="panel-title">Rate of tweets</h4></div>
+                <div class="panel-body" id="panel-locations-body"><div id="TimeChart"></div></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="panel-statistics"><h4 class="panel-title">Dimension Statistics</h4></div>
+                <div class="panel-body">
+                    <i>dimension statistics go here</i>
+                    <p>Number of topics: </p>
+                    <p>Number of tweets: </p>
+                    <p>Average tweets per topic: </p>
+                    <p>Overall Sentiment: </p>
+                </div>
+            </div>
+        </div>
+        
+    </div>
+    
+    <div class="row">
+        <div class="col-md-4">
+            <div class="panel panel-default">
+                <div class="panel-heading">
+                    <h3 class="panel-title">Alerts</h3>
+                </div>
+                
+                {% if alerts%}
+                <table class="table table-striped">
+                    
+                    <tbody id="tracked-entities-body">
+                        
+                        {%for a in alerts%}
+                        <tr><td>{{a['type']}}</td></tr>
+                        {% end %}
+                        
+                    </tbody>
+                    
+                </table>
+                {%else%}<div class="panel-body"> <strong> No Alerts Available</strong></div>{%end%}
+                
+                
+            </div>
+        </div>
+        <div class="col-md-8">
+            <div class="panel panel-default">
+                <div class="panel-heading" role="tab" id="panel-location" data-toggle="tooltip" data-placement="top" title="NB: Not all tweets provide location data">
+                    <h4 class="panel-title">Locations</h4>
+                </div>
+                <div class="panel-body" id="panel-locations-body">
+                    <div id="locationChart"></div>
+                    <select id="location-filter" class="form-control">
+                        <option value="all">all</option>
+                    </select>
+                </div>
+      
+             
+            </div>
+        </div>
+        
+    </div>
+    <hr/>
+    <div class="row" id="topics">
+        <div class="page-header text-center"><h1>Topics</h1></div>
+        <hr/>
+    </div>
+    <div class="row" id="tweets">
+        <div class="page-header text-center"><h1>Tweets</h1></div>
+        
+            {%for tweet in tweets%}
+            <div class="col-md-4">
+                <div class="panel panel-default">
+                    <div class="panel-body">
+                        <div class="row">
+                            <div class="col-md-11">{{tweet['tweet']['text']}}</div>
+                            <div class="col-md-1">
+                                <a  onclick="pushPin('{{tweet['_id']}}');"><span class="glyphicon glyphicon-pushpin"></span></a>
+                                <a href="#"><span class="glyphicon glyphicon-share-alt"></span></a>
+                                {%if tweet['gold'] == 'True'%}
+                                <a  onclick="makeGold('{{tweet['_id']}}');"><span class="glyphicon glyphicon-star isgold-icon"></span></a>
+                                {%else%}
+                                <a  onclick="makeGold('{{tweet['_id']}}');"><span class="glyphicon glyphicon-star"></span></a>
+                                {%end%}
+                            </div>
+                        </div>
+                        <hr><small>{{tweet['dimension']}}&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Author: <a href="">@{{tweet['tweet']['user']['screen_name']}}</a> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;</small>
+                    </div>
+                </div>
+            </div>
+            {%end%}
+    </div>
+</div>
+<script src="/static/application/pace.min.js"></script>
+<script src="/static/application/js/pins.js"></script>
+<script src="/static/application/js/makegold.js"></script>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+<script type="text/javascript" src="https://www.google.com/jsapi"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
+<script src="/static/application/chart.js"></script>
+<script src="/static/application/js/entity.js"></script>
+</body>
+</html>
