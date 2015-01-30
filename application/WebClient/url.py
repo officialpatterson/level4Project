@@ -5,6 +5,7 @@ from handlers.ErrorHandler import ErrorHandler
 from handlers.TrackHandler import TrackHandler
 from handlers.PinHandler import PinHandler
 from handlers.PushPinHandler import PushPinHandler
+from handlers.MakeGoldHandler import MakeGoldHandler
 from handlers.DiscoverHandler import DiscoverHandler
 from handlers.api.DimensionDistributionHandler import DimensionDistributionHandler
 from handlers.api.LocationDistributionHandler import LocationDistributionHandler
@@ -19,6 +20,7 @@ urls = [
         (r"/discover/", DiscoverHandler),
         (r"/pins/",PinHandler),
         (r"/pushpin/",PushPinHandler),
+        (r"/makegold/",MakeGoldHandler),
         (r"/api/dimensiondistribution/", DimensionDistributionHandler),
         (r"/api/locationdistribution/", LocationDistributionHandler),
         (r"/api/timedistribution/", TimeDistributionHandler),

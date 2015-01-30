@@ -87,9 +87,9 @@
                                 <a  onclick="pushPin('{{tweet['_id']}}');"><span class="glyphicon glyphicon-pushpin"></span></a>
                                 <a href="#"><span class="glyphicon glyphicon-share-alt"></span></a>
                                 {%if tweet['gold'] == 'True'%}
-                                <span class="glyphicon glyphicon-star isgold-icon"></span>
+                                <a  onclick="makeGold('{{tweet['_id']}}');"><span class="glyphicon glyphicon-star isgold-icon"></span></a>
                                 {%else%}
-                                <span class="glyphicon glyphicon-star"></span>
+                                <a  onclick="makeGold('{{tweet['_id']}}');"><span class="glyphicon glyphicon-star"></span></a>
                                 {%end%}
                             </div>
                         </div>
@@ -102,6 +102,7 @@
 </div>
 <script src="/static/application/pace.min.js"></script>
 <script src="/static/application/js/pins.js"></script>
+<script src="/static/application/js/makegold.js"></script>
 <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
 <script type="text/javascript" src="https://www.google.com/jsapi"></script>
 <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.0/js/bootstrap.min.js"></script>
