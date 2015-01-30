@@ -12,7 +12,9 @@ class TimeDistributionHandler(RequestHandler):
         entityid = self.get_argument("entity", None)
         timeportion = self.get_argument("division", 24)
         start = int(self.get_argument("period", 365))
-        dimension = urllib.unquote(self.get_argument("dimension", None))
+        dimension = self.get_argument("dimension", None)
+        if(dimension):
+            dimension = urllib.unquote(dimension)
         client = MongoClient()
         classifications = client.gtbt.classifications
         

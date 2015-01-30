@@ -8,7 +8,9 @@ class LocationDistributionHandler(RequestHandler):
     def get(self):
         
         entityid = self.get_argument("entity", None)
-        dimension = urllib.unquote(self.get_argument("dimension", None))
+        dimension = self.get_argument("dimension", None)
+        if(dimension):
+            dimension = urllib.unquote(dimension)
         start = int(self.get_argument("period", 365))
         
         if not entityid:
