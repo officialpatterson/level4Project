@@ -23,20 +23,19 @@ function buildTimePanel(){
                     
                    });
 }
-function renderLineChart(timeportion){
-    var output = $.ajax({
-                        url: "http://localhost:9000/api/timedistribution/?division="+timeportion,
-                        dataType: 'json',
-                        async: false
-                        }).responseText;
-    var timedistribution = JSON.parse(output);
-  
-    
+function renderLineChart(intervals){
+    $.getJSON("http://localhost:9000/api/timedistribution/",{"division":intervals},function(timedistribution) {
+              
+              
+              drawLineChart(timedistribution);
+              window.onresize = function(event) {drawLineChart(timedistribution);};
+              }); //end getJSON
+}
+function drawLineChart(timedistribution){
     // Create the data table.
     var data = new google.visualization.DataTable();
     data.addColumn('datetime', 'time');
     data.addColumn('number', 'tweets');
-    
     timedistribution.shift();
     
     var dataArray = new Array();
@@ -45,9 +44,18 @@ function renderLineChart(timeportion){
            
            dataArray.push([new Date(this[0]), this[1]]);
            });
+    count = 0;
+    $.each(timedistribution, function() {
+           
+           dataArray.push([new Date(this[0]), count]);
+           
+           });
     dataArray.sort(sortFunction);
     data.addRows(dataArray);
     
+    
+    
+    // Set chart options
     var options = {};
     
     // Instantiate and draw our chart, passing in some options.
