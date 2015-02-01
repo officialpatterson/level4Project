@@ -44,13 +44,7 @@ function drawLineChart(timedistribution){
            
            dataArray.push([new Date(this[0]), this[1]]);
            });
-    count = 0;
-    $.each(timedistribution, function() {
-           
-           dataArray.push([new Date(this[0]), count]);
-           
-           });
-    dataArray.sort(sortFunction);
+    
     data.addRows(dataArray);
     
     

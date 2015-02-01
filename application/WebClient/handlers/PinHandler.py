@@ -16,5 +16,5 @@ class PinHandler(RequestHandler):
         results = pins.find({"username": self.get_current_user()})
         pins = []
         for c in results:
-            pins.append(json.loads(JSONEncoder().encode(c)))
+            pins.append(c)
         self.render("pins.html", tweets=pins)

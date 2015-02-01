@@ -1,11 +1,14 @@
-from pymongo import MongoClient
+from pymongo import MongoClient, ASCENDING
 from util.JsonEncoder import JSONEncoder
 from tornado.web import RequestHandler
 from bson.code import Code
 from datetime import datetime, timedelta, date
-import urllib
+import urllib, collections, motor
+from tornado import gen
+
 
 class TimeDistributionHandler(RequestHandler):
+    @gen.coroutine
     def get(self):
         
         #make sure the database connection is present before continuing.
@@ -15,7 +18,8 @@ class TimeDistributionHandler(RequestHandler):
         dimension = self.get_argument("dimension", None)
         if(dimension):
             dimension = urllib.unquote(dimension)
-        client = MongoClient()
+        
+        client = motor.MotorClient()
         classifications = client.gtbt.classifications
         
         start = datetime.now() - timedelta(days=start)
@@ -35,16 +39,26 @@ class TimeDistributionHandler(RequestHandler):
 
         if entityid:
             if dimension:
-                result = classifications.map_reduce(map, reduce, "TimeDistributions", query={"entity":entityid, "dimension":dimension, "tweet":{"$ne":None},"tweet.created_at":{'$gte': start, '$lt': end}})
+                query={"entity":entityid, "dimension":dimension, "tweet":{"$ne":None},"tweet.created_at":{'$gte': start, '$lt': end}}
             else:
-                result = classifications.map_reduce(map, reduce, "TimeDistributions", query={"entity":entityid,"tweet":{"$ne":None},"tweet.created_at":{'$gte': start, '$lt': end}})
+                query={"entity":entityid,"tweet":{"$ne":None},"tweet.created_at":{'$gte': start, '$lt': end}}
         else:
-            result = classifications.map_reduce(map, reduce, "TimeDistributions", query={"tweet":{"$ne":None},"tweet.created_at":{'$gte': start, '$lt': end}})
-        dist = {}
-        for doc in result.find():
-            dist[doc['_id']] = doc['value']
+            query={"tweet":{"$ne":None},"tweet.created_at":{'$gte': start, '$lt': end}}
+
+
+        result = classifications.inline_map_reduce(map, reduce, query=query)
+        dist = collections.OrderedDict()
         
+        documentset = yield result
+
+        for doc in documentset:
+            dist[doc['_id']] = doc['value']
+
+
+    
         response  = [('time', 'count')]+dist.items()
+
         
         self.content_type = 'application/json'
         self.write(JSONEncoder().encode(response))
+

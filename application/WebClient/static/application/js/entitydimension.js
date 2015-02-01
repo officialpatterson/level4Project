@@ -1,14 +1,6 @@
 timeperiod = $("#timeperiod").val();
 google.load("visualization", "1", {packages:["geochart", "corechart"]});
 
-function sortFunction(a, b) {
-    if (a[0] === b[0]) {
-        return 0;
-    }
-    else {
-        return (a[0] < b[0]) ? -1 : 1;
-    }
-}
 function tweetRatePanel(entity, dimension){
     console.log(dimension);
     $.getJSON("http://localhost:9000/api/timedistribution/",{"entity":entity, "period":timeperiod, "dimension":dimension},function(timedistribution) {
@@ -31,13 +23,7 @@ function drawLineChart(timedistribution){
            
            dataArray.push([new Date(this[0]), this[1]]);
            });
-    count = 0;
-    $.each(timedistribution, function() {
-           
-           dataArray.push([new Date(this[0]), count]);
 
-           });
-    dataArray.sort(sortFunction);
     data.addRows(dataArray);
     
     

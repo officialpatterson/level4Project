@@ -1,14 +1,7 @@
 timeperiod = $("#timeperiod").val();
 google.load("visualization", "1", {packages:["geochart", "corechart"]});
 
-function sortFunction(a, b) {
-    if (a[0] === b[0]) {
-        return 0;
-    }
-    else {
-        return (a[0] < b[0]) ? -1 : 1;
-    }
-}
+
 function tweetRatePanel(entity){
     $.getJSON("http://localhost:9000/api/timedistribution/",{"entity":entity, "period":timeperiod},function(timedistribution) {
   
@@ -30,13 +23,6 @@ function drawLineChart(timedistribution){
            
            dataArray.push([new Date(this[0]), this[1]]);
            });
-    count = 0;
-    $.each(timedistribution, function() {
-           
-           dataArray.push([new Date(this[0]), count]);
-
-           });
-    dataArray.sort(sortFunction);
     data.addRows(dataArray);
     
     
@@ -46,6 +32,22 @@ function drawLineChart(timedistribution){
     
     // Instantiate and draw our chart, passing in some options.
     var chart = new google.visualization.LineChart(document.getElementById('TimeChart'));
+    chart.draw(data, options);
+}
+function SentimentProfilePanel() {
+    var data = google.visualization.arrayToDataTable([
+                                                      ['Task', 'Hours per Day'],
+                                                      ['Positive',     11],
+                                                      ['Negative',      2]
+                                                      ]);
+    
+    var options = {
+    pieHole: 0.4,
+        legend: {position: 'none'},
+        colors: ['#99FF33', '#e0440e']
+    };
+    
+    var chart = new google.visualization.PieChart(document.getElementById('sentimentProfileChart'));
     chart.draw(data, options);
 }
 function dimensionDistributionPanel(entity){
@@ -118,5 +120,6 @@ $(document).ready(function(){
                   entity = getEntityNameFromUrl();
                   dimensionDistributionPanel(entity);
                   LocationDistributionPanel(entity);
+                  SentimentProfilePanel();
                   tweetRatePanel(entity);
                   });

@@ -3,8 +3,12 @@ from util.JsonEncoder import JSONEncoder
 from bson.code import Code
 from tornado.web import RequestHandler
 from datetime import datetime, timedelta, date
-import urllib
+import urllib, motor
+from tornado import gen
+
 class LocationDistributionHandler(RequestHandler):
+    
+    @gen.coroutine
     def get(self):
         
         entityid = self.get_argument("entity", None)
@@ -17,7 +21,7 @@ class LocationDistributionHandler(RequestHandler):
             self.send_error(404)
             return
         
-        client = MongoClient()
+        client = motor.MotorClient()
         classifications = client.gtbt.classifications
         
         
@@ -30,15 +34,20 @@ class LocationDistributionHandler(RequestHandler):
         end = datetime.now()
         
         if dimension:
-            result = classifications.map_reduce(map, reduce, "results",query={"tweet.place":{"$ne":None}, "entity":entityid, "dimension":dimension, "tweet.created_at":{'$gte': start, '$lt': end}})
+            result = classifications.inline_map_reduce(map, reduce, query={"tweet.place":{"$ne":None}, "entity":entityid, "dimension":dimension, "tweet.created_at":{'$gte': start, '$lt': end}})
         else:
-            result = classifications.map_reduce(map, reduce, "results",query={"tweet.place":{"$ne":None}, "entity":entityid, "tweet.created_at":{'$gte': start, '$lt': end}})
+            result = classifications.inline_map_reduce(map, reduce, query={"tweet.place":{"$ne":None}, "entity":entityid, "tweet.created_at":{'$gte': start, '$lt': end}})
         
         dist = {}
-        for doc in result.find():
+        
+        documentset = yield result
+        
+        for doc in documentset:
             dist[doc['_id']] = doc['value']
         
-        response  = [('country', 'tweets')]+dist.items()
+        
+        
+        response  = [('time', 'count')]+dist.items()
     
         self.set_header("Access-Control-Allow-Origin", "*")
         self.content_type = 'application/json'
